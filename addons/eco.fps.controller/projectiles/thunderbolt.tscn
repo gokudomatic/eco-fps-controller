@@ -1,0 +1,181 @@
+[gd_scene load_steps=5 format=1]
+
+[ext_resource path="res://addons/eco.fps.controller/data/smoke_particle.png" type="Texture" id=1]
+
+[sub_resource type="GDScript" id=1]
+
+script/source = "\nextends RayCast\n\nconst subspark_material=preload(\"res://addons/eco.fps.controller/data/thunderbolt.mtl\")\n\nvar velocity=Vector3()\nvar power=10\nvar owner=null\nconst SPARK_DISTANCE=0.03\nconst PRECISION=50.0\n\nonready var impact=get_node(\"impact\")\nonready var geom=get_node(\"cube/geom1\")\nonready var geoms=[]\n\nvar subsparks=0\n\nfunc _ready():\n\t# Called every time the node is added to the scene.\n\t# Initialization here\n\tpass\n\nfunc activate(value):\n\tset_enabled(value)\n\tset_process(value)\n\t#geom.set_hidden(not value)\n\tget_node(\"cube\").set_hidden(not value)\n\tif not value:\n\t\timpact.set_emitting(false)\n\nfunc _process(delta):\n\tvar special=false\n\tif get_modifier(\"attack.elemental_impact\") and randi()%(get_modifier(\"attack.elemental_chance\")*10) ==0:\n\t\tspecial=true\n\t\n\tif is_colliding():\n\t\tvar p=get_global_transform().xform_inv(get_collision_point())\n\t\t\n\t\tvar object=get_collider()\n\t\tif object.has_method(\"hit\"):\n\t\t\tvelocity=get_collision_point()-get_global_transform().origin\n\t\t\tobject.hit(self,special)\n\t\t\n\t\tdraw_central_bolt(p)\n\t\tvar i=0\n\t\tfor g in geoms:\n\t\t\tdraw_bolt(g,p,i)\n\t\t\ti+=1\n\n\t\timpact.set_translation(p)\n\t\tif not impact.is_emitting():\n\t\t\timpact.set_emitting(true)\n\telse:\n\t\tif impact.is_emitting():\n\t\t\timpact.set_emitting(false)\n\t\tgeom.clear()\n\t\tfor g in geoms:\n\t\t\tg.clear()\n\nfunc draw_central_bolt(target):\n\t# draw line\n\tvar g=geom\n\tg.clear()\n\tg.begin(Mesh.PRIMITIVE_LINE_STRIP,null)\n\tg.add_vertex(Vector3())\n\tfor i in range(1,target.length()*PRECISION):\n\t\tvar point=Vector3((randf()-0.5)*SPARK_DISTANCE,(randf()-0.5)*SPARK_DISTANCE,-i/PRECISION)\n\t\tg.add_vertex(point)\n\tg.add_vertex(target)\n\tg.end()\n\nfunc draw_bolt(g,target,offset):\n\t# draw line\n\tvar t=float(OS.get_ticks_msec())/1000+randf()+offset*15\n\tg.clear()\n\tg.begin(Mesh.PRIMITIVE_LINE_STRIP,null)\n\tg.add_vertex(Vector3())\n\tfor i in range(1,target.length()*PRECISION):\n\t\tvar ii=i/PRECISION\n\t\tvar x=ii/target.length()-0.5\n\t\tvar factor_d=(1-4*abs(x*x))*1\n\t\tvar base=Vector3(cos(t)/2*factor_d,sin(t)/2*factor_d,-ii)\n\t\tvar point=Vector3((randf()-0.5)*SPARK_DISTANCE,(randf()-0.5)*SPARK_DISTANCE,0)+base\n\t\tg.add_vertex(point)\n\tg.add_vertex(target)\n\tg.end()\n\nfunc get_modifier(key):\n\treturn owner.get_data().get_modifier(key)\n\nfunc set_split_factor(value):\n\twhile subsparks<value:\n\t\tvar n=ImmediateGeometry.new()\n\t\tn.set_material_override(subspark_material)\n\t\tget_node(\"cube\").add_child(n)\n\t\tgeoms.append(n)\n\t\tsubsparks+=1\n\t\tpower+=5\n"
+
+[sub_resource type="FixedMaterial" id=2]
+
+flags/visible = true
+flags/double_sided = false
+flags/invert_faces = false
+flags/unshaded = true
+flags/on_top = false
+flags/lightmap_on_uv2 = true
+flags/colarray_is_srgb = true
+params/blend_mode = 0
+params/depth_draw = 1
+params/line_width = 3.0
+fixed_flags/use_alpha = false
+fixed_flags/use_color_array = false
+fixed_flags/use_point_size = true
+fixed_flags/discard_alpha = false
+fixed_flags/use_xy_normalmap = false
+params/diffuse = Color( 1, 1, 0.496094, 1 )
+params/specular = Color( 0, 0, 0, 1 )
+params/emission = Color( 1, 1, 0, 1 )
+params/specular_exp = 40
+params/detail_mix = 1.0
+params/normal_depth = 1
+params/shader = 0
+params/shader_param = 0.5
+params/glow = 0
+params/point_size = 3.0
+uv_xform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+textures/diffuse_tc = 0
+textures/detail_tc = 0
+textures/specular_tc = 0
+textures/emission_tc = 0
+textures/specular_exp_tc = 0
+textures/glow_tc = 0
+textures/normal_tc = 0
+textures/shade_param_tc = 0
+
+[sub_resource type="FixedMaterial" id=3]
+
+flags/visible = true
+flags/double_sided = false
+flags/invert_faces = false
+flags/unshaded = true
+flags/on_top = false
+flags/lightmap_on_uv2 = true
+flags/colarray_is_srgb = true
+params/blend_mode = 0
+params/depth_draw = 1
+params/line_width = 0.0
+fixed_flags/use_alpha = true
+fixed_flags/use_color_array = true
+fixed_flags/use_point_size = false
+fixed_flags/discard_alpha = false
+fixed_flags/use_xy_normalmap = false
+params/diffuse = Color( 1, 1, 1, 1 )
+params/specular = Color( 0, 0, 0, 1 )
+params/emission = Color( 0, 0, 0, 1 )
+params/specular_exp = 40
+params/detail_mix = 1.0
+params/normal_depth = 1
+params/shader = 0
+params/shader_param = 0.5
+params/glow = 0
+params/point_size = 1.0
+uv_xform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+textures/diffuse = ExtResource( 1 )
+textures/diffuse_tc = 0
+textures/detail_tc = 0
+textures/specular_tc = 0
+textures/emission_tc = 0
+textures/specular_exp_tc = 0
+textures/glow_tc = 0
+textures/normal_tc = 0
+textures/shade_param_tc = 0
+
+[node name="RayCast" type="RayCast"]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+enabled = false
+cast_to = Vector3( 0, 0, -20 )
+layer_mask = 1
+type_mask = 15
+script/script = SubResource( 1 )
+
+[node name="cube" type="Spatial" parent="."]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+
+[node name="geom1" type="ImmediateGeometry" parent="cube"]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+layers = 1
+geometry/visible = true
+geometry/material_override = SubResource( 2 )
+geometry/cast_shadow = 0
+geometry/receive_shadows = false
+geometry/range_begin = 0.0
+geometry/range_end = 0.0
+geometry/extra_cull_margin = 0.0
+geometry/billboard = false
+geometry/billboard_y = false
+geometry/depth_scale = false
+geometry/visible_in_all_rooms = false
+geometry/use_baked_light = false
+geometry/baked_light_tex_id = 0
+
+[node name="impact" type="Particles" parent="."]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+layers = 1
+geometry/visible = true
+geometry/material_override = null
+geometry/cast_shadow = 1
+geometry/receive_shadows = true
+geometry/range_begin = 0.0
+geometry/range_end = 0.0
+geometry/extra_cull_margin = 0.0
+geometry/billboard = false
+geometry/billboard_y = false
+geometry/depth_scale = false
+geometry/visible_in_all_rooms = false
+geometry/use_baked_light = false
+geometry/baked_light_tex_id = 0
+material = SubResource( 3 )
+amount = 16
+emitting = false
+visibility = AABB( -4, -4, -4, 8, 8, 8 )
+emission_extents = Vector3( 0, 0, 0 )
+emission_base_velocity = Vector3( 0, 0, 0 )
+emission_points = Vector3Array(  )
+gravity_normal = Vector3( 0, 1, 0 )
+local_coords = false
+emit_timeout = 0.0
+vars/lifetime = 1.0
+vars/spread = 0.1
+vars/gravity = 2.0
+vars/linear_vel = 1.0
+vars/angular_vel = 0.0
+vars/linear_accel = 0.0
+vars/radial_accel = 0.0
+vars/tan_accel = 0.0
+vars/damping = 2.34305
+vars/initial_size = 0.1
+vars/final_size = 0.5
+vars/initial_angle = 0.0
+vars/height_from_velocity = false
+vars/height = 1.0
+vars/height_speed_scale = 0.0
+rand/lifetime = 0.0
+rand/spread = 0.0
+rand/gravity = 0.0
+rand/linear_vel = 0.0
+rand/angular_vel = 0.0
+rand/linear_accel = 0.0
+rand/radial_accel = 0.0
+rand/tan_accel = 0.0
+rand/damping = 0.0
+rand/initial_size = 0.0
+rand/final_size = 0.0
+rand/initial_angle = 0.0
+rand/height = 0.0
+rand/height_speed_scale = 0.0
+color_phases/count = 2
+phase_0/pos = 0.0
+phase_0/color = Color( 0.738281, 0.738281, 0.738281, 1 )
+phase_1/pos = 1.0
+phase_1/color = Color( 0, 0, 0, 0 )
+phase_2/pos = 1.0
+phase_2/color = Color( 0, 0, 0, 1 )
+phase_3/pos = 1.0
+phase_3/color = Color( 0, 0, 0, 1 )
+
+

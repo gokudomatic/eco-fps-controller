@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=1]
+
+[sub_resource type="SampleLibrary" id=1]
+
+
+[sub_resource type="GDScript" id=2]
+
+script/source = "\nextends SpatialSamplePlayer\n\nfunc _ready():\n\tpass\n\nfunc play_sound(sound):\n#\tvar tween=get_node(\"Tween\")\n#\ttween.interpolate_callback(self,2,\"queue_free\")\n#\ttween.follow_method(self,\"is_voice_active\",true,self,\"queue_free\"\n\tself.play(sound)\n\tset_process(true)\n#\ttween.start()\n\nfunc _process(delta):\n\tif not is_voice_active(0):\n\t\tqueue_free()"
+
+[node name="sfx" type="SpatialSamplePlayer"]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+params/volume_db = 0.0
+params/pitch_scale = 1.0
+params/attenuation/min_distance = 1.0
+params/attenuation/max_distance = 100.0
+params/attenuation/distance_exp = 1.0
+params/emission_cone/degrees = 180.0
+params/emission_cone/attenuation_db = -6.0
+config/polyphony = 1
+config/samples = SubResource( 1 )
+script/script = SubResource( 2 )
+
+[node name="Tween" type="Tween" parent="."]
+
+playback/process_mode = 1
+playback/active = false
+playback/repeat = false
+playback/speed = 1.0
+
+
