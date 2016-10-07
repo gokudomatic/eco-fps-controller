@@ -1,0 +1,7 @@
+[gd_scene format=1]
+
+[node name="Spatial" type="Spatial"]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+
+
