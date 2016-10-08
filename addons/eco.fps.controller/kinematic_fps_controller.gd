@@ -7,7 +7,6 @@ const default_projectile_factory=preload("res://addons/eco.fps.controller/projec
 
 
 var _is_loaded = false
-
 var velocity=Vector3()
 var yaw = 0
 var pitch = 0
@@ -28,9 +27,9 @@ var weapon_base=null
 onready var bullet_factory=null
 onready var player_data=null
 
-onready var camera=get_node("yaw/camera")
+onready var camera=get_node("eco_yaw/camera")
 #onready var sfx=get_node("sfx")
-onready var tween=get_node("tween")
+onready var tween=get_node("eco_tween")
 
 var aim_offset=Vector3(0,1.5,0)
 
@@ -54,6 +53,7 @@ export(String) var action_right="ui_right"
 export(String) var action_attack="ui_action1"
 export(String) var action_jump="ui_jump"
 export(String) var action_use="ui_select"
+export(String) var action_reload="ui_reload"
 
 ## physics
 export(float) var ACCEL= 2
@@ -73,6 +73,12 @@ export(float) var view_sensitivity = 0.3
 
 ## weapon
 export(String) var weapon="" setget _set_weapon
+export(bool) var embed_children=false
+
+# signals
+signal start_shoot
+signal stop_shoot
+signal attribute_changed(key,value)
 
 #################################################################################3
 
@@ -85,18 +91,23 @@ func _ready():
 		bullet_factory=default_projectile_factory.new()
 	
 	if player_data==null:
-		player_data=default_data_model.new()
-		player_data.bullet_factory=bullet_factory
+		var data=default_data_model.new()
+		data.bullet_factory=bullet_factory
+		set_player_data(data)
+
+	print("set base")
+	weapon_base=bullet_factory.get_base(player_data.weapon_base_type)
+	get_node("eco_yaw/camera/shoot-point").add_child(weapon_base)
+	weapon_base.owner=self
 	
 	_update_params()
 	
+	if embed_children:
+		_embed_children()
+	
 	tween.start()
 	
-	weapon_base=bullet_factory.get_base(player_data.weapon_base_type)
-	get_node("yaw/camera/shoot-point").add_child(weapon_base)
-	weapon_base.owner=self
-	
-	get_node("yaw/camera/actionRay").add_exception(self)
+	get_node("eco_yaw/camera/actionRay").add_exception(self)
 	
 	set_fixed_process(true)
 	set_process_input(true)
@@ -113,6 +124,18 @@ func _update_params():
 	_set_action_range(action_range)
 	_set_weapon(weapon)
 
+func notify_attribute_change(key,value):
+	emit_signal("attribute_changed",key,value)
+
+func _embed_children():
+	var children=self.get_children()
+	for child in children:
+		if child.get_name().left(4)=="eco_":
+			continue
+		else:
+			remove_child(child)
+			camera.add_child(child)
+
 # Keys and mouse handler
 func _input(ie):
 	if not active:
@@ -121,21 +144,23 @@ func _input(ie):
 	if ie.type == InputEvent.MOUSE_MOTION:
 		yaw = fmod(yaw - ie.relative_x * view_sensitivity, 360)
 		pitch = max(min(pitch - ie.relative_y * view_sensitivity, 90), -90)
-		get_node("yaw").set_rotation(Vector3(0, deg2rad(yaw), 0))
-		get_node("yaw/camera").set_rotation(Vector3(deg2rad(pitch), 0, 0))
+		get_node("eco_yaw").set_rotation(Vector3(0, deg2rad(yaw), 0))
+		get_node("eco_yaw/camera").set_rotation(Vector3(deg2rad(pitch), 0, 0))
 	
 	if ie.type == InputEvent.KEY:
 		if Input.is_action_pressed(action_use):
-			var ray=get_node("yaw/camera/actionRay")
+			var ray=get_node("eco_yaw/camera/actionRay")
 			if ray.is_colliding():
 				var obj=ray.get_collider()
+		elif Input.is_action_pressed(action_reload):
+			weapon_base.reload()
+			attack_timeout=player_data.reload_time
 	
 
 # main loop
 func _fixed_process(delta):
 	
 	refresh_current_target()
-	_handle_weapon()
 	
 	if player_data.sound_to_play!=null:
 		play_sound(player_data.sound_to_play)
@@ -155,7 +180,7 @@ func _exit_tree():
 
 func _fly(delta):
 	# read the rotation of the camera
-	var aim = get_node("yaw/camera").get_global_transform().basis
+	var aim = get_node("eco_yaw/camera").get_global_transform().basis
 	# calculate the direction where the player want to move
 	var direction = Vector3()
 	if Input.is_action_pressed(action_forward):
@@ -202,11 +227,11 @@ func _walk(delta):
 	if attack_timeout>0:
 		attack_timeout-=delta
 	
-	var ray = get_node("ray")
-	var step_ray=get_node("stepRay")
+	var ray = get_node("eco_ray")
+	var step_ray=get_node("eco_stepRay")
 	
 	# read the rotation of the camera
-	var aim = get_node("yaw/camera").get_global_transform().basis
+	var aim = get_node("eco_yaw/camera").get_global_transform().basis
 	# calculate the direction where the player want to move
 	var direction = Vector3()
 	if Input.is_action_pressed(action_forward):
@@ -344,7 +369,7 @@ func _get_floor_velocity(ray,delta):
 			
 			# if the floor has an angular velocity (rotation force), the character must rotate too.
 			yaw = fmod(yaw + rad2deg(floor_angular_vel.y) * delta, 360)
-			get_node("yaw").set_rotation(Vector3(0, deg2rad(yaw), 0))
+			get_node("eco_yaw").set_rotation(Vector3(0, deg2rad(yaw), 0))
 	return floor_velocity
 
 
@@ -371,7 +396,7 @@ func explosion_blown(explosion,strength,special):
 
 
 func refresh_current_target():
-	var camera=get_node("yaw/camera")
+	var camera=get_node("eco_yaw/camera")
 	var screen_center=get_viewport().get_rect().size/2
 	
 	var pt=get_global_transform().origin
@@ -396,21 +421,21 @@ func play_sound(sound):
 	pass
 
 # Weapon management ###############################################################
-func _handle_weapon():
-	if player_data.refresh_bullet_pool or player_data.refresh_weapon_base:
-		player_data.refresh_bullet_pool=false
+func _handle_weapon(pool_type):
+	print("handle actions")
+	
+	if not _is_loaded or weapon_base==null:
+		return
+	
+	if pool_type=="base":
 		
-		if player_data.refresh_weapon_base:
-			print("equipping ",player_data.weapon_base_type)
-			
-			player_data.refresh_weapon_base=false
-			weapon_base.queue_free()
-			weapon_base=bullet_factory.get_base(player_data.weapon_base_type)
-			get_node("yaw/camera/shoot-point").add_child(weapon_base)
-			weapon_base.owner=self
-		
-		weapon_base.reset()
-		weapon_base.regenerate()
+		weapon_base.queue_free()
+		weapon_base=bullet_factory.get_base(player_data.weapon_base_type)
+		get_node("eco_yaw/camera/shoot-point").add_child(weapon_base)
+		weapon_base.owner=self
+	
+	weapon_base.reset()
+	weapon_base.regenerate()
 
 func _regen_bullet():
 	weapon_base.regenerate()
@@ -419,40 +444,47 @@ func _regen_bullet():
 func shoot():
 	if weapon_base.shoot():
 		attack_timeout=1.0/player_data.fire_rate
+	emit_signal("start_shoot")
 
 func stop_shoot():
 	weapon_base.stop_shoot()
+	emit_signal("stop_shoot")
 
 # Setter/Getter #################################################################
 func get_data():
 	return player_data
 
+func set_player_data(value):
+	if value!=player_data:
+		player_data=value
+		player_data.connect("attribute_changed",self,"notify_attribute_change")
+		player_data.connect("pool_changed",self,"_handle_weapon")
 
 func _set_leg_length(value):
 	leg_length=value
 	if _is_loaded:
-		get_node("body/leg").get_shape().set_length(value)
-		get_node("ray").set_cast_to(Vector3(0,-value*2,0))
+		get_node("eco_body/leg").get_shape().set_length(value)
+		get_node("eco_ray").set_cast_to(Vector3(0,-value*2,0))
 
 func _set_body_radius(value):
 	body_radius=value
 	if _is_loaded:
-		get_node("body").get_shape().set_radius(value)
+		get_node("eco_body").get_shape().set_radius(value)
 
 func _set_body_height(value):
 	body_height=value
 	if _is_loaded:
-		get_node("body").get_shape().set_height(value)
+		get_node("eco_body").get_shape().set_height(value)
 
 func _set_camera_height(value):
 	camera_height=value
 	if _is_loaded:
-		get_node("yaw/camera").set_translation(Vector3(0,value,0))
+		get_node("eco_yaw/camera").set_translation(Vector3(0,value,0))
 
 func _set_action_range(value):
 	action_range=value
 	if _is_loaded:
-		get_node("yaw/camera/actionRay").set_cast_to(Vector3(0,0,-value))
+		get_node("eco_yaw/camera/actionRay").set_cast_to(Vector3(0,0,-value))
 
 func _set_active(value):
 	if value==active:
@@ -469,4 +501,3 @@ func _set_weapon(value):
 	
 	if _is_loaded:
 		player_data.equip_weapon(bullet_factory.get_config(weapon))
-		print("equip ",value)

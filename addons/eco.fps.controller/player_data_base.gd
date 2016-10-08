@@ -15,7 +15,11 @@ var jump_strength=9
 var hit_invincibility_timeout=0
 var hit_invincibility_max_timeout=1
 var fire_rate=3
+var reload_time=2
 var sound_to_play=null
+
+signal attribute_changed(key,value)
+signal pool_changed(pool_type)
 
 var modifiers= {
 	"bomb.sticky":false,
@@ -36,16 +40,12 @@ var bullet_type=0 setget set_bullet_type
 var bullet_shape=0 setget set_bullet_shape
 var weapon_base_type=0 setget set_weapon_base_type
 
-
-var refresh_bullet_pool=true
-var refresh_weapon_base=true
+var bullet_pool_capacity=10
 
 var attack_regen_speed=1
 var attack_frequency=0.1
 var attack_capacity=1
 var attack_damage_factor=1
-
-var shield_hud
 
 func _fixed_process(delta):
 	
@@ -59,8 +59,8 @@ func _fixed_process(delta):
 		if shield<100:
 			shield+=delta*shield_regen_speed
 	
-	if shield_hud != null and old_shield!=shield:
-		shield_hud.value=shield
+	if old_shield!=shield:
+		notify_attribute_change("shield",shield)
 
 func hit(damage):
 	
@@ -85,17 +85,15 @@ func hit(damage):
 		# scream pain
 		sound_to_play="hurt01"
 
-	if shield_hud != null:
-		shield_hud.value=shield
-		shield_hud.lifes=life
+	notify_attribute_change("shield",shield)
+	notify_attribute_change("life",life)
 
 func set_life(value):
 	life=value
 	if life<1:
 		life=0
 	
-	if shield_hud != null:
-		shield_hud.lifes=life
+	notify_attribute_change("life",life)
 
 func set_speed(value):
 	walk_speed=min(value,100)
@@ -105,16 +103,15 @@ func get_item(item_node):
 
 func set_bullet_shape(value):
 	bullet_shape=value
-	refresh_bullet_pool=true
+	emit_signal("pool_changed","bullet")
 
 func set_bullet_type(value):
 	bullet_type=value
-	refresh_bullet_pool=true
+	emit_signal("pool_changed","bullet")
 
 func set_weapon_base_type(value):
 	weapon_base_type=value
-	refresh_bullet_pool=true
-	refresh_weapon_base=true
+	emit_signal("pool_changed","base")
 
 func get_modifier(key):
 	if modifiers.has(key):
@@ -134,3 +131,6 @@ func equip_weapon(config):
 		set_weapon_base_type(-1)
 		set_bullet_type(-1)
 		set_bullet_shape(-1)
+
+func notify_attribute_change(key,value):
+	emit_signal("attribute_changed",key,value)

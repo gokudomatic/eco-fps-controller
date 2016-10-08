@@ -57,8 +57,9 @@ STAIR_JUMP_TIMEOUT = 0.1
 footstep_factor = 0.004
 view_sensitivity = 0.3
 weapon = ""
+embed_children = false
 
-[node name="body" type="CollisionShape" parent="."]
+[node name="eco_body" type="CollisionShape" parent="."]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 transform/local = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 1.4, 0 )
@@ -66,7 +67,7 @@ shape = SubResource( 1 )
 trigger = false
 _update_shape_index = 0
 
-[node name="leg" type="CollisionShape" parent="body"]
+[node name="leg" type="CollisionShape" parent="eco_body"]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1 )
@@ -74,11 +75,11 @@ shape = SubResource( 2 )
 trigger = false
 _update_shape_index = -1
 
-[node name="yaw" type="Spatial" parent="."]
+[node name="eco_yaw" type="Spatial" parent="."]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 
-[node name="camera" type="Camera" parent="yaw"]
+[node name="camera" type="Camera" parent="eco_yaw"]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0 )
@@ -93,7 +94,7 @@ environment = null
 h_offset = 0.0
 v_offset = 0.0
 
-[node name="actionRay" type="RayCast" parent="yaw/camera"]
+[node name="actionRay" type="RayCast" parent="eco_yaw/camera"]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 enabled = true
@@ -101,17 +102,17 @@ cast_to = Vector3( 0, 0, -2 )
 layer_mask = 1
 type_mask = 15
 
-[node name="shoot-point" type="Spatial" parent="yaw/camera"]
+[node name="shoot-point" type="Spatial" parent="eco_yaw/camera"]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, -0.377026 )
 
-[node name="weapon-pos" type="Spatial" parent="yaw/camera"]
+[node name="weapon-pos" type="Spatial" parent="eco_yaw/camera"]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, -0.3 )
 
-[node name="ray" type="RayCast" parent="."]
+[node name="eco_ray" type="RayCast" parent="."]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0 )
@@ -120,7 +121,7 @@ cast_to = Vector3( 0, -0.8, 0 )
 layer_mask = 1
 type_mask = 15
 
-[node name="stepRay" type="RayCast" parent="."]
+[node name="eco_stepRay" type="RayCast" parent="."]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, -0.58 )
@@ -129,7 +130,7 @@ cast_to = Vector3( 0, -0.5, 0 )
 layer_mask = 1
 type_mask = 15
 
-[node name="sfx" type="SamplePlayer" parent="."]
+[node name="eco_sfx" type="SamplePlayer" parent="."]
 
 config/polyphony = 1
 config/samples = null
@@ -146,7 +147,7 @@ default/reverb_room = 2
 default/reverb_send = 0.0
 default/chorus_send = 0.0
 
-[node name="tween" type="Tween" parent="."]
+[node name="eco_tween" type="Tween" parent="."]
 
 playback/process_mode = 1
 playback/active = false

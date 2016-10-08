@@ -20,6 +20,9 @@ func stop_shoot():
 func regenerate():
 	pass
 
+func reload():
+	pass
+
 func reset():
 	pass
 

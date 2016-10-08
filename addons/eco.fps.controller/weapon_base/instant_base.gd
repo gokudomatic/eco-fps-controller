@@ -3,6 +3,9 @@ extends "projectile_abstract.gd"
 
 #var sfx_class=preload("res://SpacialSoundEffect.tscn")
 
+var remaining_bullets=0
+var cartridge_capacity=-1
+
 const SPLIT_STEP=PI/64
 
 onready var ray=get_node("direction/RayCast")
@@ -18,9 +21,13 @@ var velocity=Vector3()
 func set_owner(value):
 	.set_owner(value)
 	power=5
+	cartridge_capacity=data.bullet_pool_capacity
 	ray.add_exception_rid(owner)
 
 func shoot():
+	if cartridge_capacity>0 and remaining_bullets<=0:
+		return false
+	
 	var special=false
 	if explosion_class != null and randi()%data.get_modifier("attack.elemental_chance") ==0 :
 		special=true
@@ -30,6 +37,10 @@ func shoot():
 	_shoot_ray(ray,special)
 	for r in subrays:
 		_shoot_ray(r,special)
+	
+	if cartridge_capacity>0:
+		remaining_bullets-=1
+		data.notify_attribute_change("nb_bullets",remaining_bullets)
 	
 	return true
 
@@ -87,6 +98,12 @@ func reset():
 	else:
 		set_process(false)
 		direction.set_transform(Transform())
+	
+	reload()
+
+func reload():
+	remaining_bullets=cartridge_capacity
+	data.notify_attribute_change("nb_bullets",remaining_bullets)
 
 func _process(delta):
 	if owner.current_target!=null:
