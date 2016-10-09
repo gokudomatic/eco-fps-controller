@@ -71,6 +71,7 @@ export(float) var STAIR_JUMP_TIMEOUT=0.1
 export(float) var footstep_factor=0.004
 export(float) var view_sensitivity = 0.3
 
+export(NodePath) var sfx_library=null
 ## weapon
 export(String) var weapon="" setget _set_weapon
 export(bool) var embed_children=false
@@ -79,6 +80,7 @@ export(bool) var embed_children=false
 signal start_shoot
 signal stop_shoot
 signal attribute_changed(key,value)
+signal reload_weapon
 
 #################################################################################3
 
@@ -155,6 +157,7 @@ func _input(ie):
 		elif Input.is_action_pressed(action_reload):
 			weapon_base.reload()
 			attack_timeout=player_data.reload_time
+			emit_signal("reload_weapon")
 	
 
 # main loop

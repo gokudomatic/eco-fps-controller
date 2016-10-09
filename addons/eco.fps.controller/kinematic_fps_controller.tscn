@@ -42,6 +42,7 @@ action_right = "ui_right"
 action_attack = "ui_action1"
 action_jump = "ui_jump"
 action_use = "ui_select"
+action_reload = "ui_reload"
 ACCEL = 2
 DEACCEL = 4
 FLY_SPEED = 100
@@ -56,6 +57,7 @@ STAIR_JUMP_SPEED = 5
 STAIR_JUMP_TIMEOUT = 0.1
 footstep_factor = 0.004
 view_sensitivity = 0.3
+sfx_library = null
 weapon = ""
 embed_children = false
 
