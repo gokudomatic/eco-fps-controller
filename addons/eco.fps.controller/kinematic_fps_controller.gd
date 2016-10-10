@@ -28,7 +28,7 @@ onready var bullet_factory=null
 onready var player_data=null
 
 onready var camera=get_node("eco_yaw/camera")
-#onready var sfx=get_node("sfx")
+onready var sfx=get_node("eco_sfx")
 onready var tween=get_node("eco_tween")
 
 var aim_offset=Vector3(0,1.5,0)
@@ -97,10 +97,15 @@ func _ready():
 		data.bullet_factory=bullet_factory
 		set_player_data(data)
 
-	print("set base")
+	if sfx_library!=null and !sfx_library.is_empty():
+		var node=get_node(sfx_library)
+		if node!=null and node.has_method("get_sample_library"):
+			get_node("eco_sfx").set_sample_library(node.get_sample_library())
+	
 	weapon_base=bullet_factory.get_base(player_data.weapon_base_type)
 	get_node("eco_yaw/camera/shoot-point").add_child(weapon_base)
 	weapon_base.owner=self
+	weapon_base.set_sample_library(sfx.get_sample_library())
 	
 	_update_params()
 	
@@ -263,14 +268,14 @@ func _walk(delta):
 	if !on_floor and jump_timeout<=0 and is_ray_colliding:
 		set_translation(ray.get_collision_point())
 		on_floor=true
-		play_sound("land01")
+		play_sound("player_land")
 	elif on_floor and not is_ray_colliding:
 		# check that flag on_floor still reflects the state of the ray.
 		on_floor=false
 	
 	if on_floor:
 		if step_timeout<=0:
-			play_sound("footstep01")
+			play_sound("player_footstep")
 			step_timeout=1
 		else:
 			step_timeout-=velocity.length()*footstep_factor
@@ -336,7 +341,7 @@ func _walk(delta):
 			jump_timeout=MAX_JUMP_TIMEOUT
 			on_floor=false
 			multijump=player_data.get_modifier("multijump")
-			play_sound("jump01")
+			play_sound("player_jump")
 	elif Input.is_action_pressed(action_jump) and multijump>0 and jump_timeout<=0:
 		velocity.y=player_data.jump_strength
 		jump_timeout=MAX_JUMP_TIMEOUT
@@ -420,7 +425,7 @@ func refresh_current_target():
 	current_target=closest_enemy
 
 func play_sound(sound):
-	#sfx.play(sound)
+	sfx.play(sound)
 	pass
 
 # Weapon management ###############################################################
@@ -436,6 +441,7 @@ func _handle_weapon(pool_type):
 		weapon_base=bullet_factory.get_base(player_data.weapon_base_type)
 		get_node("eco_yaw/camera/shoot-point").add_child(weapon_base)
 		weapon_base.owner=self
+		weapon_base.set_sample_library(sfx.get_sample_library())
 	
 	weapon_base.reset()
 	weapon_base.regenerate()

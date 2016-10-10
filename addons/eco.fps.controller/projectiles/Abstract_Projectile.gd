@@ -1,7 +1,7 @@
 
 extends Node
 
-#var sfx_class=preload("res://SpacialSoundEffect.tscn")
+var sfx_class=preload("res://addons/eco.fps.controller/explosions/SpacialSoundEffect.tscn")
 
 var owner=null setget set_owner
 var _mesh=null
@@ -9,6 +9,7 @@ var explosion_class=null
 var sound_name=null
 var alive=true
 var target=null
+var sample_lib=null
 
 var delayed_timer=0.5
 var copies=null setget set_copies
@@ -96,12 +97,17 @@ func rotate_to_target(direction):
 	return [vx,vy]
 
 func create_impact_sfx():
-	pass
-#	if sound_name!=null:
-#		var sfx=sfx_class.instance()
-#		owner.get_parent_spatial().add_child(sfx)
-#		sfx.set_global_transform(get_global_transform())
-#		sfx.play_sound(sound_name)
+	print("-")
+	if sound_name!=null:
+		print(sound_name)
+		var sfx=sfx_class.instance()
+		sfx.set_sample_library(sample_lib)
+		owner.get_parent_spatial().add_child(sfx)
+		sfx.set_global_transform(get_global_transform())
+		sfx.play_sound(sound_name)
+
+func set_sample_library(value):
+	sample_lib=value
 
 func set_elemental(value):
 	pass

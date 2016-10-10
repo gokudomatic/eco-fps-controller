@@ -8,7 +8,7 @@
 
 script/source = "extends Spatial\n\nfunc _ready():\n\tset_process_input(true)\n\nfunc _input(event):\n\tif Input.is_action_pressed(\"ui_cancel\"):\n\t\tget_node(\"player\")._set_active(false)\n\t\tget_tree().quit()\n\nfunc _on_player_attribute_changed( key, value ):\n\tif key==\"nb_bullets\":\n\t\tget_node(\"simpleHUD/Label\").set_text(str(value))\n\n\nfunc _on_player_reload_weapon():\n\tget_node(\"weapon_animation\").play(\"reload_weapon\")\n"
 
-[sub_resource type="Environment" id=4]
+[sub_resource type="Environment" id=2]
 
 ambient_light/enabled = true
 ambient_light/color = Color( 0.613281, 0.613281, 0.613281, 1 )
@@ -52,9 +52,8 @@ bcs/contrast = 1.0
 bcs/saturation = 1.0
 srgb/enabled = false
 
-[sub_resource type="Animation" id=2]
+[sub_resource type="Animation" id=3]
 
-resource/name = "reload_weapon"
 length = 2.0
 loop = false
 step = 0.1
@@ -87,7 +86,7 @@ transform/local = Transform( 0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0.633479, -0.33975
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
-environment = SubResource( 4 )
+environment = SubResource( 2 )
 
 [node name="simpleHUD" type="CanvasLayer" parent="."]
 
@@ -116,7 +115,7 @@ max_lines_visible = -1
 playback/process_mode = 1
 playback/default_blend_time = 0.0
 root/root = NodePath("..")
-anims/reload_weapon = SubResource( 2 )
+anims/reload_weapon = SubResource( 3 )
 playback/active = true
 playback/speed = 1.0
 blend_times = [  ]

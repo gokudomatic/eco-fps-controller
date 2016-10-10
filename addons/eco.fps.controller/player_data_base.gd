@@ -28,7 +28,7 @@ var modifiers= {
 	"attack.split_factor":0,
 	"attack.split_delay":0.1,
 	"attack.elemental_impact":"",
-	"attack.elemental_chance":1,
+	"attack.elemental_chance":8,
 	"attack.elemental_power":0.5,
 	"explosion.power":40,
 	"projectile.homing":false,
@@ -121,6 +121,9 @@ func get_modifier(key):
 
 func set_modifier(key,value):
 	modifiers[key]=value
+
+func reset_pool():
+	emit_signal("pool_changed","bullet")
 
 func equip_weapon(config):
 	if config!=null:

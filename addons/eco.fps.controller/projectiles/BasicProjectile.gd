@@ -52,11 +52,12 @@ func _on_body_enter(body):
 			explosion.rescale(0.2*get_modifier("attack.size"))
 			owner.get_parent_spatial().add_child(explosion)
 		
-#		if sound_name!=null:
-#			var sfx=sfx_class.instance()
-#			owner.get_parent_spatial().add_child(sfx)
-#			sfx.set_global_transform(t)
-#			sfx.play_sound(sound_name)
+		if sound_name!=null:
+			var sfx=sfx_class.instance()
+			owner.get_parent_spatial().add_child(sfx)
+			sfx.set_global_transform(t)
+			sfx.set_sample_library(sample_lib)
+			sfx.play_sound(sound_name)
 		queue_free()
 
 func set_owner(value):

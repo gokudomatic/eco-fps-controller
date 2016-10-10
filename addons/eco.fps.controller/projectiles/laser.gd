@@ -39,14 +39,6 @@ func _process(delta):
 	else:
 		if impact.is_emitting():
 			impact.set_emitting(false)
-#		# draw line
-#		geom.begin(Mesh.PRIMITIVE_TRIANGLES,null)
-#		geom.add_vertex(Vector3())
-#		geom.add_vertex(p+Vector3(10,0,0))
-#		geom.add_vertex(p-Vector3(10,0,0))
-#		geom.end()
-#	else:
-#		geom.clear()
 
 func get_modifier(key):
 	return owner.get_data().get_modifier(key)

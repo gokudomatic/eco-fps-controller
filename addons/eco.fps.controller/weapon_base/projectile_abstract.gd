@@ -28,3 +28,6 @@ func reset():
 
 func get_modifier(key):
 	return owner.get_data().get_modifier(key)
+
+func set_sample_library(lib):
+	pass

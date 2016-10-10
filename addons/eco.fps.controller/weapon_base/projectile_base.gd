@@ -5,6 +5,9 @@ var bullet_pool=[]
 
 onready var sfx=get_node("sfx")
 
+func set_sample_library(lib):
+	sfx.set_sample_library(lib)
+
 func shoot():
 	if bullet_pool.size()>0:
 		var bullet=bullet_pool[0]
@@ -33,6 +36,7 @@ func regenerate():
 		
 		for b in bullets:
 			b.owner=owner
+			b.set_sample_library(sfx.get_sample_library())
 			if is_special and randi()%get_modifier("attack.elemental_chance") == 0:
 				b.explosion_class=impact_class
 				b.sound_name=bullet_factory.get_impact_sound(0,data.bullet_type,data.bullet_shape,elemental,true)
@@ -45,6 +49,7 @@ func regenerate():
 				var sub_bullets=bullet_factory.get_projectiles(data.bullet_type,data.bullet_shape,split_factor)
 				for sb in sub_bullets:
 					sb.owner=owner
+					sb.set_sample_library(sfx.get_sample_library())
 					if is_special and randi()%get_modifier("attack.elemental_chance") == 0:
 						sb.explosion_class=impact_class
 						sb.sound_name=bullet_factory.get_impact_sound(0,data.bullet_type,data.bullet_shape,elemental,true)
