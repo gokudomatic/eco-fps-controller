@@ -9,5 +9,5 @@ This controller has only the most basic features but it provides a strong struct
 
 The controller provides only basic assets for particle effects and projectiles. No models are provided for weapons and the character himself. No sound samples are provided. It is however easy to bind 3d models and sound samples to the controller.
 
-This component is licensed as MIT and can be freely used for any kind of project, including commercial games. The resources of the samples have however their own license.
+This component is licensed as MIT and can be freely used and modified for any kind of project, including commercial games. The resources of the samples have however their own license.
 
