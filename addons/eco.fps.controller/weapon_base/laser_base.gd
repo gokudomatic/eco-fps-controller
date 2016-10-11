@@ -3,15 +3,13 @@ extends "projectile_abstract.gd"
 
 onready var sfx=get_node("sfx")
 
-const laser_class=preload("res://addons/eco.fps.controller/projectiles/laser.tscn")
-const bolt_class=preload("res://addons/eco.fps.controller/projectiles/thunderbolt.tscn")
 const SPLIT_STEP=PI/64
 
 onready var direction=get_node("direction")
 var main_ray=null
 var rays=[]
 
-var ray_class=laser_class
+var ray_class=null
 var looking_away=false
 var power=1
 var velocity=Vector3()
@@ -22,15 +20,11 @@ func set_owner(value):
 func shoot():
 	var special=false
 	
-	if data.bullet_type==0:
-		if !main_ray.is_enabled():
-			sfx.play(bullet_factory.get_shoot_sound(3,data.bullet_type,data.bullet_shape))
-	elif data.bullet_type==1:
-		if not sfx.is_voice_active(0):
-			sfx.play(bullet_factory.get_shoot_sound(3,data.bullet_type,data.bullet_shape))
-	_shoot_ray(main_ray,special)
-	for r in rays:
-		_shoot_ray(r,special)
+	if !main_ray.is_enabled():
+		sfx.play(bullet_factory.get_shoot_sound(3,data.bullet_type,data.bullet_shape))
+		_shoot_ray(main_ray,special)
+		for r in rays:
+			_shoot_ray(r,special)
 	
 	return true
 
@@ -105,3 +99,6 @@ func _process(delta):
 	elif looking_away:
 		direction.set_transform(Transform())
 		looking_away=false
+
+func set_sample_library(lib):
+	sfx.set_sample_library(lib)

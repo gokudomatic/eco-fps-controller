@@ -4,6 +4,7 @@ extends RigidBody
 var parent=null
 var timer=0
 var speed=2
+var tic_sfx_name
 
 func _ready():
 	get_node("AnimationPlayer").set_speed(speed)
@@ -15,7 +16,13 @@ func rescale(size):
 	
 	set_shape_transform(0,t)
 	get_node("Sphere").set_scale(Vector3(new_size,new_size,new_size))
-	#get_node("CollisionShape").set_scale(new_size)
+
+func _play_tic():
+	if tic_sfx_name!=null:
+		get_node("sfx").play(tic_sfx_name)
+
+func set_sample_library(lib):
+	get_node("sfx").set_sample_library(lib)
 
 func _process(delta):
 	

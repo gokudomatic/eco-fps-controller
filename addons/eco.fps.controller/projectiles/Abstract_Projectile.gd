@@ -98,7 +98,6 @@ func rotate_to_target(direction):
 
 func create_impact_sfx():
 	if sound_name!=null:
-		print(sound_name)
 		var sfx=sfx_class.instance()
 		sfx.set_sample_library(sample_lib)
 		owner.get_parent_spatial().add_child(sfx)
@@ -107,6 +106,8 @@ func create_impact_sfx():
 
 func set_sample_library(value):
 	sample_lib=value
+	if _mesh.has_method("set_sample_library"):
+		_mesh.set_sample_library(value)
 
 func set_elemental(value):
 	pass

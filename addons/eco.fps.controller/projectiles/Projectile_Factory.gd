@@ -83,12 +83,12 @@ func get_bomb(type,amount=1):
 	
 	var clazz=grenade
 	var explosion_clazz=explosion1
-#	if explosion_type!=null and explosion_type!="":
-#		explosion_clazz=get_impact_explosion_class(explosion_type)
 
 	for i in range(amount):
 		var p=basic_bomb.instance()
-		p.add_mesh(clazz.instance())
+		var g=clazz.instance()
+		g.tic_sfx_name="grenade_tic"
+		p.add_mesh(g)
 		p.add_explosion(explosion_clazz.instance())
 		result.append(p)
 	

@@ -1,12 +1,11 @@
-[gd_scene load_steps=14 format=1]
+[gd_scene load_steps=15 format=1]
 
 [ext_resource path="res://addons/eco.fps.controller/kinematic_fps_controller.tscn" type="PackedScene" id=1]
 [ext_resource path="res://samples/3_sounds/sounds/explode.smp" type="Sample" id=2]
-[ext_resource path="res://samples/3_sounds/sounds/flamethrower.smp" type="Sample" id=3]
-[ext_resource path="res://samples/3_sounds/sounds/jump.smp" type="Sample" id=4]
-[ext_resource path="res://samples/3_sounds/sounds/shoot.smp" type="Sample" id=5]
-[ext_resource path="res://samples/3_sounds/sounds/footstep.smp" type="Sample" id=6]
-[ext_resource path="res://samples/3_sounds/sounds/land.smp" type="Sample" id=7]
+[ext_resource path="res://samples/3_sounds/sounds/jump.smp" type="Sample" id=3]
+[ext_resource path="res://samples/3_sounds/sounds/footstep.smp" type="Sample" id=4]
+[ext_resource path="res://samples/3_sounds/sounds/land.smp" type="Sample" id=5]
+[ext_resource path="res://samples/3_sounds/sounds/shoot.smp" type="Sample" id=6]
 
 [sub_resource type="GDScript" id=1]
 
@@ -19,6 +18,10 @@ plane = Plane( 0, 1, 0, 0 )
 [sub_resource type="BoxShape" id=3]
 
 extents = Vector3( 335.227, 1, 258.499 )
+
+[sub_resource type="BoxShape" id=7]
+
+extents = Vector3( 2.84881, 10.0137, 1.80959 )
 
 [sub_resource type="FixedMaterial" id=4]
 
@@ -38,6 +41,43 @@ fixed_flags/use_point_size = false
 fixed_flags/discard_alpha = false
 fixed_flags/use_xy_normalmap = false
 params/diffuse = Color( 0, 0.175781, 0.0151062, 1 )
+params/specular = Color( 0, 0, 0, 1 )
+params/emission = Color( 0, 0, 0, 1 )
+params/specular_exp = 40
+params/detail_mix = 1.0
+params/normal_depth = 1
+params/shader = 0
+params/shader_param = 0.5
+params/glow = 0
+params/point_size = 1.0
+uv_xform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+textures/diffuse_tc = 0
+textures/detail_tc = 0
+textures/specular_tc = 0
+textures/emission_tc = 0
+textures/specular_exp_tc = 0
+textures/glow_tc = 0
+textures/normal_tc = 0
+textures/shade_param_tc = 0
+
+[sub_resource type="FixedMaterial" id=8]
+
+flags/visible = true
+flags/double_sided = false
+flags/invert_faces = false
+flags/unshaded = false
+flags/on_top = false
+flags/lightmap_on_uv2 = true
+flags/colarray_is_srgb = true
+params/blend_mode = 0
+params/depth_draw = 1
+params/line_width = 0.0
+fixed_flags/use_alpha = false
+fixed_flags/use_color_array = false
+fixed_flags/use_point_size = false
+fixed_flags/discard_alpha = false
+fixed_flags/use_xy_normalmap = false
+params/diffuse = Color( 0.222656, 0.222656, 0.222656, 1 )
 params/specular = Color( 0, 0, 0, 1 )
 params/emission = Color( 0, 0, 0, 1 )
 params/specular_exp = 40
@@ -104,15 +144,11 @@ srgb/enabled = false
 [sub_resource type="SampleLibrary" id=6]
 
 samples/elemental_explosion = { "db":0.0, "pitch":1.0, "sample":ExtResource( 2 ) }
-samples/explosion_default = { "db":0.0, "pitch":1.0, "sample":ExtResource( 2 ) }
-samples/flamethrower_basic = { "db":0.0, "pitch":1.0, "sample":ExtResource( 3 ) }
-samples/impact_default = { "db":0.0, "pitch":1.0, "sample":ExtResource( 4 ) }
-samples/instant_shot = { "db":0.0, "pitch":1.0, "sample":ExtResource( 5 ) }
-samples/player_footstep = { "db":0.0, "pitch":1.0, "sample":ExtResource( 6 ) }
-samples/player_jump = { "db":0.0, "pitch":1.0, "sample":ExtResource( 4 ) }
-samples/player_land = { "db":0.0, "pitch":1.0, "sample":ExtResource( 7 ) }
-samples/projectile_beam = { "db":0.0, "pitch":1.0, "sample":ExtResource( 5 ) }
-samples/projectile_missile = { "db":0.0, "pitch":1.0, "sample":ExtResource( 5 ) }
+samples/impact_default = { "db":0.0, "pitch":1.0, "sample":ExtResource( 3 ) }
+samples/player_footstep = { "db":0.0, "pitch":1.0, "sample":ExtResource( 4 ) }
+samples/player_jump = { "db":0.0, "pitch":1.0, "sample":ExtResource( 3 ) }
+samples/player_land = { "db":0.0, "pitch":1.0, "sample":ExtResource( 5 ) }
+samples/projectile_beam = { "db":0.0, "pitch":1.0, "sample":ExtResource( 6 ) }
 
 [node name="world" type="Spatial"]
 
@@ -123,20 +159,23 @@ script/script = SubResource( 1 )
 
 transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.391381, 0 )
 sfx_library = NodePath("../samples")
-weapon = "grenade"
+weapon = "beam"
 
 [node name="StaticBody" type="StaticBody" parent="."]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 input/ray_pickable = true
 input/capture_on_drag = false
-shape_count = 2
+shape_count = 3
 shapes/0/shape = SubResource( 2 )
 shapes/0/transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 shapes/0/trigger = false
 shapes/1/shape = SubResource( 3 )
 shapes/1/transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.12891, 0 )
 shapes/1/trigger = false
+shapes/2/shape = SubResource( 7 )
+shapes/2/transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.9424, 28.0103 )
+shapes/2/trigger = false
 collision/layers = 1
 collision/mask = 1
 friction = 1.0
@@ -180,6 +219,33 @@ quad/axis = 1
 quad/size = Vector2( 100, 100 )
 quad/offset = Vector2( 0, 0 )
 quad/centered = true
+
+[node name="CollisionShape 2" type="CollisionShape" parent="StaticBody"]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.9424, 28.0103 )
+shape = SubResource( 7 )
+trigger = false
+_update_shape_index = 2
+
+[node name="TestCube" type="TestCube" parent="StaticBody/CollisionShape 2"]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+transform/local = Transform( 2, 0, 0, 0, 10, 0, 0, 0, 1.1, 0, 0, 0 )
+layers = 1
+geometry/visible = true
+geometry/material_override = SubResource( 8 )
+geometry/cast_shadow = 1
+geometry/receive_shadows = true
+geometry/range_begin = 0.0
+geometry/range_end = 0.0
+geometry/extra_cull_margin = 0.0
+geometry/billboard = false
+geometry/billboard_y = false
+geometry/depth_scale = false
+geometry/visible_in_all_rooms = false
+geometry/use_baked_light = false
+geometry/baked_light_tex_id = 0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 

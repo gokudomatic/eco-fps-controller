@@ -33,7 +33,6 @@ func shoot():
 		special=true
 	
 	sfx.play(bullet_factory.get_shoot_sound(1,data.bullet_type,data.bullet_shape))
-	print(bullet_factory.get_shoot_sound(1,data.bullet_type,data.bullet_shape))
 	
 	_shoot_ray(ray,special)
 	for r in subrays:
