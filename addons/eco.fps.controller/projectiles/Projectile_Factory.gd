@@ -144,11 +144,14 @@ func get_shoot_sound(base,type,shape):
 			sounds=["projectile_missile"]
 		else:
 			if shape==1:
-				sounds=["projectile_laser"]
-			else:
 				sounds=["projectile_ball"]
+			else:
+				sounds=["projectile_beam"]
 	elif base==1:
-		sounds=["instant_shot"]
+		if type==1:
+			sounds=["magic_shot"]
+		else:
+			sounds=["instant_shot"]
 	elif base==2:
 		sounds=["flamethrower_basic"]
 	elif base==3:
@@ -170,7 +173,7 @@ func get_impact_sound(base,type,shape,elemental,is_special=true):
 	
 	if base==0:
 		if type==1 or type==2:
-			sounds=["explosion_01","explosion_02"]
+			sounds=["explosion_default"]
 		else:
 			if is_special:
 				sounds=get_elemental_impact_sound(elemental)

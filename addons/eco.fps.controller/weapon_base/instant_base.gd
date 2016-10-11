@@ -1,7 +1,7 @@
 
 extends "projectile_abstract.gd"
 
-#var sfx_class=preload("res://SpacialSoundEffect.tscn")
+var sfx_class=preload("res://addons/eco.fps.controller/explosions/SpacialSoundEffect.tscn")
 
 var remaining_bullets=0
 var cartridge_capacity=-1
@@ -31,8 +31,9 @@ func shoot():
 	var special=false
 	if explosion_class != null and randi()%data.get_modifier("attack.elemental_chance") ==0 :
 		special=true
-	else:
-		sfx.play(bullet_factory.get_shoot_sound(1,data.bullet_type,data.bullet_shape))
+	
+	sfx.play(bullet_factory.get_shoot_sound(1,data.bullet_type,data.bullet_shape))
+	print(bullet_factory.get_shoot_sound(1,data.bullet_type,data.bullet_shape))
 	
 	_shoot_ray(ray,special)
 	for r in subrays:
@@ -63,11 +64,12 @@ func _shoot_ray(r,special):
 			owner.get_parent_spatial().add_child(explosion)
 			
 			var sound_name=bullet_factory.get_impact_sound(1,data.bullet_type,data.bullet_shape,data.get_modifier("attack.elemental_impact"),true)
-#			if sound_name!=null:
-#				var sfx=sfx_class.instance()
-#				owner.get_parent_spatial().add_child(sfx)
-#				sfx.set_global_transform(t)
-#				sfx.play_sound(sound_name)
+			if sound_name!=null:
+				var sfx=sfx_class.instance()
+				owner.get_parent_spatial().add_child(sfx)
+				sfx.set_global_transform(t)
+				sfx.set_sample_library(self.sfx.get_sample_library())
+				sfx.play_sound(sound_name)
 
 func reset():
 	explosion_class=bullet_factory.get_impact_explosion_class(data.get_modifier("attack.elemental_impact"))
@@ -111,3 +113,6 @@ func _process(delta):
 		direction.set_global_transform(t.looking_at(owner.current_target.get_global_transform().origin,Vector3(0,1,0)))
 	else:
 		direction.set_transform(Transform())
+
+func set_sample_library(lib):
+	sfx.set_sample_library(lib)

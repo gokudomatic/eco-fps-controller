@@ -97,7 +97,6 @@ func rotate_to_target(direction):
 	return [vx,vy]
 
 func create_impact_sfx():
-	print("-")
 	if sound_name!=null:
 		print(sound_name)
 		var sfx=sfx_class.instance()

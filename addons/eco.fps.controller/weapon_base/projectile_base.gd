@@ -19,6 +19,7 @@ func shoot():
 		bullet.reset_target()
 		owner.get_parent_spatial().add_child(bullet)
 		
+		print(bullet_factory.get_shoot_sound(0,data.bullet_type,data.bullet_shape))
 		sfx.play(bullet_factory.get_shoot_sound(0,data.bullet_type,data.bullet_shape))
 		
 		return true

@@ -40,7 +40,7 @@ var bullet_type=0 setget set_bullet_type
 var bullet_shape=0 setget set_bullet_shape
 var weapon_base_type=0 setget set_weapon_base_type
 
-var bullet_pool_capacity=8
+var bullet_pool_capacity=-1
 
 var attack_regen_speed=1
 var attack_frequency=0.1

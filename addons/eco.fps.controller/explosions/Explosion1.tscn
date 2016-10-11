@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=1]
+[gd_scene load_steps=9 format=1]
 
 [ext_resource path="res://addons/eco.fps.controller/data/shockwave.png" type="Texture" id=1]
 [ext_resource path="res://addons/eco.fps.controller/data/flame1.png" type="Texture" id=2]
@@ -158,9 +158,6 @@ textures/shade_param_tc = 0
 [sub_resource type="SphereShape" id=6]
 
 radius = 5.53782
-
-[sub_resource type="SampleLibrary" id=7]
-
 
 [node name="explosion" type="Spatial"]
 
@@ -452,7 +449,7 @@ params/attenuation/distance_exp = 1.0
 params/emission_cone/degrees = 180.0
 params/emission_cone/attenuation_db = -6.0
 config/polyphony = 1
-config/samples = SubResource( 7 )
+config/samples = null
 
 [connection signal="area_enter" from="Area" to="." method="_on_2_area_enter"]
 

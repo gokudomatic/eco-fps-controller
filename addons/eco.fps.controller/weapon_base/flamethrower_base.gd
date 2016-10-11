@@ -10,9 +10,10 @@ func set_owner(value):
 	.set_owner(value)
 
 func shoot():
-	get_node("flame").set_emitting(true)
-	set_fixed_process(true)
-	sfx.play(bullet_factory.get_shoot_sound(2,data.bullet_type,data.bullet_shape))
+	if not get_node("flame").is_emitting():
+		get_node("flame").set_emitting(true)
+		set_fixed_process(true)
+		sfx.play(bullet_factory.get_shoot_sound(2,data.bullet_type,data.bullet_shape))
 	
 	return true
 
@@ -41,3 +42,6 @@ func reset():
 		flame.set_color_phase_color(0,Color(0.069158,0.429688,0.038605,0.891317))
 		flame.set_color_phase_color(1,Color(0.018265,0.222656,0.031039,0.79717))
 		flame.set_color_phase_color(2,Color(0.019608,0,0,0))
+
+func set_sample_library(lib):
+	sfx.set_sample_library(lib)

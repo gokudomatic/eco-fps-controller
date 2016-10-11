@@ -72,16 +72,14 @@ func explode():
 	if explosion != null:
 		explosion.owner=owner
 		explosion.source=self
+		explosion.set_sample_library(sample_lib)
 		var t=Transform()
 		t.origin=_mesh.get_global_transform().origin
 		explosion.set_global_transform(t)
 		explosion.rescale(get_modifier("attack.size"))
 		owner.get_parent_spatial().add_child(explosion)
 		if explosion.has_method("play"):
-			var name=str(randi()%2+1)
-			if name.length()==1:
-				name="0"+name
-			explosion.play("explosion"+name)
+			explosion.play(sound_name)
 			
 	_mesh.queue_free()
 	
