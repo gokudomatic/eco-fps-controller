@@ -19,11 +19,11 @@ plane = Plane( 0, 1, 0, 0 )
 
 extents = Vector3( 335.227, 1, 258.499 )
 
-[sub_resource type="BoxShape" id=7]
+[sub_resource type="BoxShape" id=4]
 
 extents = Vector3( 2.84881, 10.0137, 1.80959 )
 
-[sub_resource type="FixedMaterial" id=4]
+[sub_resource type="FixedMaterial" id=5]
 
 flags/visible = true
 flags/double_sided = false
@@ -60,7 +60,7 @@ textures/glow_tc = 0
 textures/normal_tc = 0
 textures/shade_param_tc = 0
 
-[sub_resource type="FixedMaterial" id=8]
+[sub_resource type="FixedMaterial" id=6]
 
 flags/visible = true
 flags/double_sided = false
@@ -97,7 +97,7 @@ textures/glow_tc = 0
 textures/normal_tc = 0
 textures/shade_param_tc = 0
 
-[sub_resource type="Environment" id=5]
+[sub_resource type="Environment" id=7]
 
 ambient_light/enabled = true
 ambient_light/color = Color( 1, 1, 1, 1 )
@@ -141,7 +141,7 @@ bcs/contrast = 1.0
 bcs/saturation = 1.0
 srgb/enabled = false
 
-[sub_resource type="SampleLibrary" id=6]
+[sub_resource type="SampleLibrary" id=8]
 
 samples/elemental_explosion = { "db":0.0, "pitch":1.0, "sample":ExtResource( 2 ) }
 samples/impact_default = { "db":0.0, "pitch":1.0, "sample":ExtResource( 3 ) }
@@ -173,7 +173,7 @@ shapes/0/trigger = false
 shapes/1/shape = SubResource( 3 )
 shapes/1/transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.12891, 0 )
 shapes/1/trigger = false
-shapes/2/shape = SubResource( 7 )
+shapes/2/shape = SubResource( 4 )
 shapes/2/transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.9424, 28.0103 )
 shapes/2/trigger = false
 collision/layers = 1
@@ -203,7 +203,7 @@ _update_shape_index = 1
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 layers = 1
 geometry/visible = true
-geometry/material_override = SubResource( 4 )
+geometry/material_override = SubResource( 5 )
 geometry/cast_shadow = 1
 geometry/receive_shadows = true
 geometry/range_begin = 0.0
@@ -224,7 +224,7 @@ quad/centered = true
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.9424, 28.0103 )
-shape = SubResource( 7 )
+shape = SubResource( 4 )
 trigger = false
 _update_shape_index = 2
 
@@ -234,7 +234,7 @@ _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 transform/local = Transform( 2, 0, 0, 0, 10, 0, 0, 0, 1.1, 0, 0, 0 )
 layers = 1
 geometry/visible = true
-geometry/material_override = SubResource( 8 )
+geometry/material_override = SubResource( 6 )
 geometry/cast_shadow = 1
 geometry/receive_shadows = true
 geometry/range_begin = 0.0
@@ -250,12 +250,12 @@ geometry/baked_light_tex_id = 0
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
-environment = SubResource( 5 )
+environment = SubResource( 7 )
 
 [node name="samples" type="SamplePlayer" parent="."]
 
 config/polyphony = 1
-config/samples = SubResource( 6 )
+config/samples = SubResource( 8 )
 default/volume_db = 0.0
 default/pitch_scale = 1.0
 default/pan = 0.0

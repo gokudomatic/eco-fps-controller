@@ -81,6 +81,7 @@ signal start_shoot
 signal stop_shoot
 signal attribute_changed(key,value)
 signal reload_weapon
+signal ammo_used
 
 #################################################################################3
 
@@ -159,11 +160,13 @@ func _input(ie):
 			var ray=get_node("eco_yaw/camera/actionRay")
 			if ray.is_colliding():
 				var obj=ray.get_collider()
+				if obj.has_method("use"):
+					obj.use(self)
 		elif Input.is_action_pressed(action_reload):
 			weapon_base.reload()
 			attack_timeout=player_data.reload_time
 			emit_signal("reload_weapon")
-	
+
 
 # main loop
 func _fixed_process(delta):
@@ -426,11 +429,9 @@ func refresh_current_target():
 
 func play_sound(sound):
 	sfx.play(sound)
-	pass
 
 # Weapon management ###############################################################
 func _handle_weapon(pool_type):
-	print("handle actions")
 	
 	if not _is_loaded or weapon_base==null:
 		return
@@ -459,6 +460,24 @@ func stop_shoot():
 	weapon_base.stop_shoot()
 	emit_signal("stop_shoot")
 
+func notify_ammo_used():
+	emit_signal("ammo_used")
+
+func reload_weapon(amount=-1):
+		weapon_base.reload(amount)
+
+func set_ammo(value):
+	weapon_base.remaining_total_bullets=value
+
+func get_ammo():
+	return weapon_base.remaining_total_bullets
+
+func set_loaded_ammo(value):
+	weapon_base.remaining_bullets=value
+
+func get_loaded_ammo():
+	return weapon_base.remaining_bullets
+
 # Setter/Getter #################################################################
 func get_data():
 	return player_data
@@ -468,6 +487,7 @@ func set_player_data(value):
 		player_data=value
 		player_data.connect("attribute_changed",self,"notify_attribute_change")
 		player_data.connect("pool_changed",self,"_handle_weapon")
+		player_data.connect("ammo_used",self,"notify_ammo_used")
 
 func _set_leg_length(value):
 	leg_length=value
@@ -510,3 +530,4 @@ func _set_weapon(value):
 	
 	if _is_loaded:
 		player_data.equip_weapon(bullet_factory.get_config(weapon))
+		emit_signal("attribute_changed","weapon",value)

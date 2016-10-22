@@ -3,9 +3,6 @@ extends "projectile_abstract.gd"
 
 var sfx_class=preload("res://addons/eco.fps.controller/explosions/SpacialSoundEffect.tscn")
 
-var remaining_bullets=0
-var cartridge_capacity=-1
-
 const SPLIT_STEP=PI/64
 
 onready var ray=get_node("direction/RayCast")
@@ -41,6 +38,7 @@ func shoot():
 	if cartridge_capacity>0:
 		remaining_bullets-=1
 		data.notify_attribute_change("nb_bullets",remaining_bullets)
+		data.notify_ammo_used()
 	
 	return true
 
@@ -71,6 +69,7 @@ func _shoot_ray(r,special):
 				sfx.play_sound(sound_name)
 
 func reset():
+	.reset()
 	explosion_class=bullet_factory.get_impact_explosion_class(data.get_modifier("attack.elemental_impact"))
 	var i=subrays.size()
 
@@ -99,12 +98,6 @@ func reset():
 	else:
 		set_process(false)
 		direction.set_transform(Transform())
-	
-	reload()
-
-func reload():
-	remaining_bullets=cartridge_capacity
-	data.notify_attribute_change("nb_bullets",remaining_bullets)
 
 func _process(delta):
 	if owner.current_target!=null:

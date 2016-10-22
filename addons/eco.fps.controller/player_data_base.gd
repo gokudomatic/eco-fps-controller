@@ -20,6 +20,7 @@ var sound_to_play=null
 
 signal attribute_changed(key,value)
 signal pool_changed(pool_type)
+signal ammo_used
 
 var modifiers= {
 	"bomb.sticky":false,
@@ -41,11 +42,16 @@ var bullet_shape=0 setget set_bullet_shape
 var weapon_base_type=0 setget set_weapon_base_type
 
 var bullet_pool_capacity=-1
+var bullet_max_capacity=-1
 
 var attack_regen_speed=1
 var attack_frequency=0.1
 var attack_capacity=1
 var attack_damage_factor=1
+
+func _ready():
+	notify_attribute_change("shield",shield)
+	notify_attribute_change("life",life)
 
 func _fixed_process(delta):
 	
@@ -137,3 +143,6 @@ func equip_weapon(config):
 
 func notify_attribute_change(key,value):
 	emit_signal("attribute_changed",key,value)
+
+func notify_ammo_used():
+	emit_signal("ammo_used")

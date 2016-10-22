@@ -5,6 +5,8 @@ onready var sfx=get_node("sfx")
 
 const SPLIT_STEP=PI/64
 
+var ammo_consummation_timeout=0
+
 onready var direction=get_node("direction")
 var main_ray=null
 var rays=[]
@@ -18,6 +20,9 @@ func set_owner(value):
 	.set_owner(value)
 
 func shoot():
+	if cartridge_capacity>0 and remaining_bullets<=0:
+		return false
+	
 	var special=false
 	
 	if !main_ray.is_enabled():
@@ -25,6 +30,8 @@ func shoot():
 		_shoot_ray(main_ray,special)
 		for r in rays:
 			_shoot_ray(r,special)
+	
+	set_fixed_process(true)
 	
 	return true
 
@@ -39,11 +46,13 @@ func _shoot_ray(r,special):
 
 func stop_shoot():
 	sfx.stop_all()
+	set_fixed_process(false)
 	main_ray.activate(false)
 	for r in rays:
 		r.activate(false)
 
 func reset():
+	.reset()
 	if data.get_modifier("attack.elemental_impact")=="explosion":
 		data.set_modifier("attack.elemental_impact","fire")
 
@@ -90,6 +99,19 @@ func reset():
 	else:
 		set_process(false)
 		direction.set_transform(Transform())
+
+func _fixed_process(delta):
+	ammo_consummation_timeout-=delta
+	if cartridge_capacity>-1 and ammo_consummation_timeout<=0:
+		print("tick")
+		remaining_bullets-=1
+		data.notify_attribute_change("nb_bullets",remaining_bullets)
+		data.notify_ammo_used()
+		ammo_consummation_timeout=data.fire_rate
+		
+		if remaining_bullets<=0:
+			stop_shoot()
+
 
 func _process(delta):
 	if owner.current_target!=null:

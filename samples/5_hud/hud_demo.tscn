@@ -1,0 +1,424 @@
+[gd_scene load_steps=8 format=1]
+
+[ext_resource path="res://addons/eco.fps.controller/kinematic_fps_controller.tscn" type="PackedScene" id=1]
+
+[sub_resource type="GDScript" id=1]
+
+script/source = "extends Spatial\n\nvar selected_weapon=null\nvar selected_weapon_profile=null\n\nvar weapons={\n\t0:[\"beam\",\"ball\"],\n\t1:[\"pistol\",\"magic wand\"],\n\t2:[\"flame\"],\n\t3:[\"rocket\",\"grenade\"],\n\t4:[\"laser\",\"bolt\"]\n}\n\nvar weapon_profiles={\n\t\"beam\":{ \"ammo\":100,\"max_ammo\":100,\"ammo_loaded\":8,\"max_ammo_loaded\":8,\"fire_rate\":3,\"reload_time\":2},\n\t\"ball\":{ \"ammo\":-1,\"max_ammo\":-1,\"ammo_loaded\":-1,\"max_ammo_loaded\":-1,\"fire_rate\":3,\"reload_time\":2},\n\t\"pistol\":{ \"ammo\":100,\"max_ammo\":100,\"ammo_loaded\":10,\"max_ammo_loaded\":10,\"fire_rate\":3,\"reload_time\":2},\n\t\"magic wand\":{ \"ammo\":-1,\"max_ammo\":-1,\"ammo_loaded\":-1,\"max_ammo_loaded\":-1,\"fire_rate\":3,\"reload_time\":2},\n\t\"flame\":{ \"ammo\":500,\"max_ammo\":500,\"ammo_loaded\":100,\"max_ammo_loaded\":100,\"fire_rate\":0.3,\"reload_time\":2},\n\t\"rocket\":{ \"ammo\":40,\"max_ammo\":40,\"ammo_loaded\":3,\"max_ammo_loaded\":3,\"fire_rate\":3,\"reload_time\":2},\n\t\"grenade\":{ \"ammo\":50,\"max_ammo\":50,\"ammo_loaded\":5,\"max_ammo_loaded\":5,\"fire_rate\":3,\"reload_time\":2},\n\t\"laser\":{ \"ammo\":-1,\"max_ammo\":-1,\"ammo_loaded\":-1,\"max_ammo_loaded\":-1,\"fire_rate\":3,\"reload_time\":2},\n\t\"bolt\":{ \"ammo\":-1,\"max_ammo\":-1,\"ammo_loaded\":50,\"max_ammo_loaded\":50,\"fire_rate\":0.3,\"reload_time\":2}\n}\n\nfunc _ready():\n\t\n\tvar data=get_node(\"player\").get_data()\n\tdata.bullet_pool_capacity=6\n\tdata.reset_pool()\n\t\n\tset_process_input(true)\n\nfunc _input(event):\n\tif Input.is_action_pressed(\"ui_cancel\"):\n\t\tget_tree().quit()\n\t\n\tif Input.is_key_pressed(KEY_1):\n\t\tselect_weapon(0)\n\telif Input.is_key_pressed(KEY_2):\n\t\tselect_weapon(1)\n\telif Input.is_key_pressed(KEY_3):\n\t\tselect_weapon(2)\n\telif Input.is_key_pressed(KEY_4):\n\t\tselect_weapon(3)\n\telif Input.is_key_pressed(KEY_5):\n\t\tselect_weapon(4)\n\nfunc select_weapon(num):\n\tsave_profile()\n\t\n\tvar rack=weapons[num]\n\tvar i=rack.find(selected_weapon)\n\tvar new_i=0\n\tif i>-1:\n\t\tnew_i=i+1\n\t\tif new_i>=rack.size():\n\t\t\tnew_i=0\n\t\t\n\tselected_weapon=rack[new_i]\n\tget_node(\"player\").weapon=selected_weapon\n\tselected_weapon_profile=weapon_profiles[selected_weapon]\n\tload_profile()\n\nfunc load_profile():\n\tvar data=get_node(\"player\").get_data()\n\tdata.fire_rate=selected_weapon_profile.fire_rate\n\tdata.reload_time=selected_weapon_profile.reload_time\n\tdata.bullet_pool_capacity=selected_weapon_profile.max_ammo_loaded\n\tdata.bullet_max_capacity=selected_weapon_profile.max_ammo\n\tget_node(\"player\").set_ammo(selected_weapon_profile.ammo)\n\tget_node(\"player\").set_loaded_ammo(selected_weapon_profile.ammo_loaded)\n\tdata.reset_pool()\n\t\n\nfunc save_profile():\n\tif selected_weapon_profile==null:\n\t\treturn\n\t\t\n\tvar data=get_node(\"player\").get_data()\n\t\n\tselected_weapon_profile.ammo=get_node(\"player\").get_ammo()\n\tselected_weapon_profile.ammo_loaded=get_node(\"player\").get_loaded_ammo()\n\t\n\nfunc _on_player_reload_weapon():\n\tpass # replace with function body\n"
+
+[sub_resource type="PlaneShape" id=2]
+
+plane = Plane( 0, 1, 0, 0 )
+
+[sub_resource type="FixedMaterial" id=3]
+
+flags/visible = true
+flags/double_sided = false
+flags/invert_faces = false
+flags/unshaded = false
+flags/on_top = false
+flags/lightmap_on_uv2 = true
+flags/colarray_is_srgb = true
+params/blend_mode = 0
+params/depth_draw = 1
+params/line_width = 0.0
+fixed_flags/use_alpha = false
+fixed_flags/use_color_array = false
+fixed_flags/use_point_size = false
+fixed_flags/discard_alpha = false
+fixed_flags/use_xy_normalmap = false
+params/diffuse = Color( 0.320312, 0.217712, 0, 1 )
+params/specular = Color( 0, 0, 0, 1 )
+params/emission = Color( 0, 0, 0, 1 )
+params/specular_exp = 40
+params/detail_mix = 1.0
+params/normal_depth = 1
+params/shader = 0
+params/shader_param = 0.5
+params/glow = 0
+params/point_size = 1.0
+uv_xform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+textures/diffuse_tc = 0
+textures/detail_tc = 0
+textures/specular_tc = 0
+textures/emission_tc = 0
+textures/specular_exp_tc = 0
+textures/glow_tc = 0
+textures/normal_tc = 0
+textures/shade_param_tc = 0
+
+[sub_resource type="Environment" id=4]
+
+ambient_light/enabled = true
+ambient_light/color = Color( 1, 1, 1, 1 )
+ambient_light/energy = 1.0
+fxaa/enabled = false
+background/mode = 2
+background/color = Color( 0.443137, 0.635294, 1, 1 )
+background/energy = 1.0
+background/scale = 1.0
+background/glow = 0.0
+background/canvas_max_layer = null
+glow/enabled = false
+glow/blur_passes = 1
+glow/blur_scale = 1
+glow/blur_strength = 1
+glow/blur_blend_mode = null
+glow/bloom = 0.0
+glow/bloom_treshold = 0.5
+dof_blur/enabled = false
+dof_blur/blur_passes = 1
+dof_blur/begin = 100.0
+dof_blur/range = 10.0
+hdr/enabled = false
+hdr/tonemapper = 0
+hdr/exposure = 0.4
+hdr/white = 1.0
+hdr/glow_treshold = 0.95
+hdr/glow_scale = 0.2
+hdr/min_luminance = 0.4
+hdr/max_luminance = 8.0
+hdr/exposure_adj_speed = 0.5
+fog/enabled = false
+fog/begin = 100.0
+fog/begin_color = Color( 0, 0, 0, 1 )
+fog/end_color = Color( 0, 0, 0, 1 )
+fog/attenuation = 1.0
+fog/bg = true
+bcs/enabled = false
+bcs/brightness = 1.0
+bcs/contrast = 1.0
+bcs/saturation = 1.0
+srgb/enabled = false
+
+[sub_resource type="GDScript" id=5]
+
+script/source = "extends CanvasLayer\n\nvar weapon_label_mapping={\n\t\"beam\":\"weapon_0_0\",\n\t\"ball\":\"weapon_0_1\",\n\t\"pistol\":\"weapon_1_0\",\n\t\"magic wand\":\"weapon_1_1\",\n\t\"flame\":\"weapon_2_0\",\n\t\"rocket\":\"weapon_3_0\",\n\t\"grenade\":\"weapon_3_1\",\n\t\"laser\":\"weapon_4_0\",\n\t\"bolt\":\"weapon_4_1\"\n}\n\nvar selected_weapon_label=null\n\nfunc _ready():\n\tpass\n\n\nfunc _on_player_attribute_changed( key, value ):\n\tvar n=null\n\tif key==\"life\":\n\t\tn=get_node(\"lbl_life\")\n\telif key==\"shield\":\n\t\tn=get_node(\"lbl_shield\")\n\telif key==\"nb_bullets\":\n\t\tn=get_node(\"lbl_ammo\")\n\t\tvalue=str(value)+\" / \"+str(.get_node(\"/root/world/player\").get_ammo())\n\telif key==\"weapon\" and value!=selected_weapon_label:\n\t\tvar n1=get_node(\"hud_weapons/\"+weapon_label_mapping[value])\n\t\tif n1!=null: # if it\'s valid, set it\n\t\t\tif selected_weapon_label!=null:\n\t\t\t\tget_node(\"hud_weapons/\"+weapon_label_mapping[selected_weapon_label]).add_color_override(\"font_color\",Color(1,1,1))\n\t\t\tselected_weapon_label=value\n\t\t\tn1.add_color_override(\"font_color\",Color(1,1,0))\n\t\t\tget_node(\"AnimationPlayer\").play(\"hud_display\")\n\t\n\tif n!=null:\n\t\tn.set_text(str(value))\n"
+
+[sub_resource type="Animation" id=6]
+
+resource/name = "hud_display"
+length = 3.0
+loop = false
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("hud_weapons:visibility/opacity")
+tracks/0/interp = 1
+tracks/0/imported = false
+tracks/0/keys = { "times":FloatArray( 0, 0.5, 2.5, 3 ), "transitions":FloatArray( 1, 1, 1, 1 ), "update":0, "values":[ 0.0, 1.0, 1.0, 0.0 ] }
+tracks/1/type = "value"
+tracks/1/path = NodePath("hud_weapons:visibility/visible")
+tracks/1/interp = 1
+tracks/1/imported = false
+tracks/1/keys = { "times":FloatArray( 0, 3 ), "transitions":FloatArray( 1, 1 ), "update":1, "values":[ true, false ] }
+
+[node name="world" type="Spatial"]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+script/script = SubResource( 1 )
+
+[node name="StaticBody" type="StaticBody" parent="."]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+input/ray_pickable = true
+input/capture_on_drag = false
+shape_count = 1
+shapes/0/shape = SubResource( 2 )
+shapes/0/transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+shapes/0/trigger = false
+collision/layers = 1
+collision/mask = 1
+friction = 1.0
+bounce = 0.0
+constant_linear_velocity = Vector3( 0, 0, 0 )
+constant_angular_velocity = Vector3( 0, 0, 0 )
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticBody"]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+shape = SubResource( 2 )
+trigger = false
+_update_shape_index = 0
+
+[node name="Quad" type="Quad" parent="StaticBody"]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+layers = 1
+geometry/visible = true
+geometry/material_override = SubResource( 3 )
+geometry/cast_shadow = 1
+geometry/receive_shadows = true
+geometry/range_begin = 0.0
+geometry/range_end = 0.0
+geometry/extra_cull_margin = 0.0
+geometry/billboard = false
+geometry/billboard_y = false
+geometry/depth_scale = false
+geometry/visible_in_all_rooms = false
+geometry/use_baked_light = false
+geometry/baked_light_tex_id = 0
+quad/axis = 1
+quad/size = Vector2( 70, 70 )
+quad/offset = Vector2( 0, 0 )
+quad/centered = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+environment = SubResource( 4 )
+
+[node name="player" parent="." instance=ExtResource( 1 )]
+
+transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.782092, 0 )
+weapon = "pistol"
+
+[node name="hud" type="CanvasLayer" parent="."]
+
+layer = 1
+offset = Vector2( 0, 0 )
+rotation = 0.0
+scale = Vector2( 1, 1 )
+script/script = SubResource( 5 )
+
+[node name="lbl_life" type="Label" parent="hud"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 4.0
+margin/top = 5.0
+margin/right = 44.0
+margin/bottom = 19.0
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="lbl_shield" type="Label" parent="hud"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 4.0
+margin/top = 24.0
+margin/right = 44.0
+margin/bottom = 38.0
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="lbl_ammo" type="Label" parent="hud"]
+
+anchor/left = 1
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 109.0
+margin/top = 3.0
+margin/right = 1016.0
+margin/bottom = 17.0
+align = 2
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="hud_weapons" type="Control" parent="hud"]
+
+visibility/visible = false
+visibility/opacity = 0.0
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 40.0
+margin/bottom = 40.0
+
+[node name="weapon_0_0" type="Label" parent="hud/hud_weapons"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 78.0
+margin/top = 6.0
+margin/right = 130.0
+margin/bottom = 20.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "1. beam"
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="weapon_0_1" type="Label" parent="hud/hud_weapons"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 80.0
+margin/top = 19.0
+margin/right = 132.0
+margin/bottom = 33.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "ball"
+align = 2
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="weapon_1_0" type="Label" parent="hud/hud_weapons"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 166.0
+margin/top = 6.0
+margin/right = 233.0
+margin/bottom = 20.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "2. pistol"
+align = 2
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="weapon_1_1" type="Label" parent="hud/hud_weapons"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 147.0
+margin/top = 24.0
+margin/right = 232.0
+margin/bottom = 38.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "magic wand"
+align = 2
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="weapon_2_0" type="Label" parent="hud/hud_weapons"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 243.0
+margin/top = 6.0
+margin/right = 366.0
+margin/bottom = 20.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "3. flamethrower"
+align = 2
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="weapon_3_0" type="Label" parent="hud/hud_weapons"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 385.0
+margin/top = 6.0
+margin/right = 470.0
+margin/bottom = 20.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "4. bazooka"
+align = 2
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="weapon_3_1" type="Label" parent="hud/hud_weapons"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 385.0
+margin/top = 23.0
+margin/right = 470.0
+margin/bottom = 37.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "grenade"
+align = 2
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="weapon_3_2" type="Label" parent="hud/hud_weapons"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 385.0
+margin/top = 23.0
+margin/right = 470.0
+margin/bottom = 37.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "grenade"
+align = 2
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="weapon_4_0" type="Label" parent="hud/hud_weapons"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 481.0
+margin/top = 6.0
+margin/right = 555.0
+margin/bottom = 20.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "5. laser"
+align = 2
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="weapon_4_1" type="Label" parent="hud/hud_weapons"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 480.0
+margin/top = 24.0
+margin/right = 554.0
+margin/bottom = 38.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "bolt"
+align = 2
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="hud"]
+
+playback/process_mode = 1
+playback/default_blend_time = 0.0
+root/root = NodePath("..")
+anims/hud_display = SubResource( 6 )
+playback/active = true
+playback/speed = 1.0
+blend_times = [  ]
+autoplay = ""
+
+[connection signal="attribute_changed" from="player" to="hud" method="_on_player_attribute_changed"]
+
+[connection signal="reload_weapon" from="player" to="." method="_on_player_reload_weapon"]
+
+

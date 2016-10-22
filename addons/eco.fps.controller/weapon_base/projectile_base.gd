@@ -9,6 +9,9 @@ func set_sample_library(lib):
 	sfx.set_sample_library(lib)
 
 func shoot():
+	if cartridge_capacity>0 and remaining_bullets<=0:
+		return false
+	
 	if bullet_pool.size()>0:
 		var bullet=bullet_pool[0]
 		bullet_pool.pop_front()
@@ -19,8 +22,12 @@ func shoot():
 		bullet.reset_target()
 		owner.get_parent_spatial().add_child(bullet)
 		
-		print(bullet_factory.get_shoot_sound(0,data.bullet_type,data.bullet_shape))
 		sfx.play(bullet_factory.get_shoot_sound(0,data.bullet_type,data.bullet_shape))
+		
+		if cartridge_capacity>0:
+			remaining_bullets-=1
+			data.notify_attribute_change("nb_bullets",remaining_bullets)
+			data.notify_ammo_used()
 		
 		return true
 	else:
@@ -60,6 +67,7 @@ func regenerate():
 				b.copies=sub_bullets
 
 func reset():
+	.reset()
 	for b in bullet_pool:
 		b.queue_free()
 	bullet_pool.clear()
