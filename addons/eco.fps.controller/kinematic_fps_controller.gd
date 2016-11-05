@@ -317,7 +317,6 @@ func _walk(delta):
 	velocity.x=hvel.x
 	velocity.z=hvel.z
 	
-	
 	# move the node
 	var motion=velocity*delta
 	motion=move(motion)
@@ -472,7 +471,9 @@ func set_ammo(value):
 func get_ammo():
 	return weapon_base.remaining_total_bullets
 
-func set_loaded_ammo(value):
+func set_loaded_ammo(value=-1):
+	if value==-1:
+		value=player_data.bullet_pool_capacity
 	weapon_base.remaining_bullets=value
 
 func get_loaded_ammo():

@@ -4,7 +4,7 @@
 
 [sub_resource type="GDScript" id=1]
 
-script/source = "\nextends Spatial\n\nfunc _ready():\n\tget_node(\"AnimationPlayer\").play(\"explode\")\n\nvar owner=null\nvar source=null\nvar power=60\n\nfunc die():\n\tqueue_free()\n\tif source!=null:\n\t\tsource.die()\n\nfunc rescale(size):\n\tset_scale(Vector3(size,size,size))\n\trescale_particle(\"fire\",size,0.4,1.6)\n\nfunc rescale_particle(name,size,min_factor,max_factor):\n\tget_node(name).set_variable(Particles.VAR_INITIAL_SIZE,min_factor*size)\n\tget_node(name).set_variable(Particles.VAR_FINAL_SIZE,max_factor*size)\n\tget_node(name).set_amount(16*size+4)"
+script/source = "\nextends Spatial\n\nfunc _ready():\n\tprint(\"acide\")\n\tget_node(\"AnimationPlayer\").play(\"explode\")\n\nvar owner=null\nvar source=null\nvar power=60\n\nfunc die():\n\tqueue_free()\n\tif source!=null:\n\t\tsource.die()\n\nfunc rescale(size):\n\tset_scale(Vector3(size,size,size))\n\trescale_particle(\"fire\",size,0.4,1.6)\n\nfunc rescale_particle(name,size,min_factor,max_factor):\n\tget_node(name).set_variable(Particles.VAR_INITIAL_SIZE,min_factor*size)\n\tget_node(name).set_variable(Particles.VAR_FINAL_SIZE,max_factor*size)\n\tget_node(name).set_amount(16*size+4)"
 
 [sub_resource type="Animation" id=2]
 
