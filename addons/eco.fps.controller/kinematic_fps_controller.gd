@@ -90,8 +90,7 @@ func _ready():
 
 	_is_loaded=true
 
-	if bullet_factory==null:
-		bullet_factory=default_projectile_factory.new()
+	bullet_factory=get_bullet_factory_instance()
 	
 	if player_data==null:
 		var data=default_data_model.new()
@@ -480,6 +479,7 @@ func get_loaded_ammo():
 	return weapon_base.remaining_bullets
 
 # Setter/Getter #################################################################
+
 func get_data():
 	return player_data
 
@@ -532,3 +532,6 @@ func _set_weapon(value):
 	if _is_loaded:
 		player_data.equip_weapon(bullet_factory.get_config(weapon))
 		emit_signal("attribute_changed","weapon",value)
+
+func get_bullet_factory_instance():
+	return default_projectile_factory.new()

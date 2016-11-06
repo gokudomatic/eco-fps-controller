@@ -106,7 +106,7 @@ func create_impact_sfx():
 
 func set_sample_library(value):
 	sample_lib=value
-	if _mesh.has_method("set_sample_library"):
+	if _mesh!=null and _mesh.has_method("set_sample_library"):
 		_mesh.set_sample_library(value)
 
 func set_elemental(value):
