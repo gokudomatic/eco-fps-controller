@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=1]
+[gd_scene load_steps=8 format=1]
 
 [ext_resource path="res://samples/7_custom_weapon/beam.gd" type="Script" id=1]
 [ext_resource path="res://samples/7_custom_weapon/textures/particle.png" type="Texture" id=2]
@@ -85,7 +85,7 @@ tracks/5/keys = { "times":FloatArray( 0.5 ), "transitions":FloatArray( 1 ), "val
 [sub_resource type="Animation" id=4]
 
 resource/name = "normal"
-length = 1.0
+length = 3.0
 loop = false
 step = 0.1
 tracks/0/type = "value"
@@ -114,6 +114,9 @@ tracks/4/interp = 1
 tracks/4/imported = false
 tracks/4/keys = { "times":FloatArray( 0 ), "transitions":FloatArray( 1 ), "update":1, "values":[ true ] }
 
+[sub_resource type="SampleLibrary" id=5]
+
+
 [node name="beam" type="Spatial"]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
@@ -138,7 +141,7 @@ geometry/use_baked_light = false
 geometry/baked_light_tex_id = 0
 material = SubResource( 1 )
 amount = 64
-emitting = true
+emitting = false
 visibility = AABB( -4, -4, -4, 8, 8, 8 )
 emission_extents = Vector3( 0, 0, 0 )
 emission_base_velocity = Vector3( 0, 0, 0 )
@@ -146,83 +149,17 @@ emission_points = Vector3Array(  )
 gravity_normal = Vector3( 0, -1, 0 )
 local_coords = true
 emit_timeout = 0.0
-vars/lifetime = 2.0
+vars/lifetime = 1.0
 vars/spread = 0.2
 vars/gravity = 0.0
-vars/linear_vel = 0.2
+vars/linear_vel = 20.0
 vars/angular_vel = 0.0
 vars/linear_accel = 0.0
 vars/radial_accel = 0.0
 vars/tan_accel = 0.0
 vars/damping = 0.0
-vars/initial_size = 0.3
-vars/final_size = 3.0
-vars/initial_angle = 0.0
-vars/height_from_velocity = false
-vars/height = 1.0
-vars/height_speed_scale = 0.0
-rand/lifetime = 0.0
-rand/spread = 0.0
-rand/gravity = 0.0
-rand/linear_vel = 0.0
-rand/angular_vel = 0.0
-rand/linear_accel = 0.0
-rand/radial_accel = 0.0
-rand/tan_accel = 0.0
-rand/damping = 2.0
-rand/initial_size = 0.0
-rand/final_size = 0.0
-rand/initial_angle = 0.0
-rand/height = 0.0
-rand/height_speed_scale = 0.0
-color_phases/count = 3
-phase_0/pos = 0.0
-phase_0/color = Color( 1, 1, 1, 1 )
-phase_1/pos = 0.7
-phase_1/color = Color( 0, 1, 0.15625, 0.360656 )
-phase_2/pos = 1.0
-phase_2/color = Color( 0.0327005, 0.132812, 0.00466919, 0 )
-phase_3/pos = 1.0
-phase_3/color = Color( 0, 0, 0, 1 )
-
-[node name="Particles1" type="Particles" parent="."]
-
-_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
-layers = 1
-geometry/visible = true
-geometry/material_override = null
-geometry/cast_shadow = 1
-geometry/receive_shadows = true
-geometry/range_begin = 0.0
-geometry/range_end = 0.0
-geometry/extra_cull_margin = 0.0
-geometry/billboard = false
-geometry/billboard_y = false
-geometry/depth_scale = false
-geometry/visible_in_all_rooms = false
-geometry/use_baked_light = false
-geometry/baked_light_tex_id = 0
-material = SubResource( 1 )
-amount = 64
-emitting = true
-visibility = AABB( -4, -4, -4, 8, 8, 8 )
-emission_extents = Vector3( 0, 0, 0 )
-emission_base_velocity = Vector3( 0, 0, 0 )
-emission_points = Vector3Array(  )
-gravity_normal = Vector3( 0, -1, 0 )
-local_coords = true
-emit_timeout = 0.0
-vars/lifetime = 2.0
-vars/spread = 0.2
-vars/gravity = 0.0
-vars/linear_vel = 0.2
-vars/angular_vel = 0.0
-vars/linear_accel = 0.0
-vars/radial_accel = 0.0
-vars/tan_accel = 0.0
-vars/damping = 0.0
-vars/initial_size = 0.3
-vars/final_size = 3.0
+vars/initial_size = 1.0
+vars/final_size = 20.0
 vars/initial_angle = 0.0
 vars/height_from_velocity = false
 vars/height = 1.0
@@ -291,6 +228,19 @@ playback/active = true
 playback/speed = 1.0
 blend_times = [  ]
 autoplay = ""
+
+[node name="sfx" type="SpatialSamplePlayer" parent="."]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+params/volume_db = 0.0
+params/pitch_scale = 1.0
+params/attenuation/min_distance = 1.0
+params/attenuation/max_distance = 100.0
+params/attenuation/distance_exp = 1.0
+params/emission_cone/degrees = 180.0
+params/emission_cone/attenuation_db = -6.0
+config/polyphony = 1
+config/samples = SubResource( 5 )
 
 [connection signal="body_enter" from="Area" to="." method="_on_Area_body_enter"]
 

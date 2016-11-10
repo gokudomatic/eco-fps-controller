@@ -2,7 +2,7 @@ extends "res://addons/eco.fps.controller/projectiles/Projectile_Factory.gd"
 
 func _init():
 	._init()
-	register("bfg",0,10,0)
+	register("bfg",5,10,0)
 
 func get_projectiles(type,shape,amount=1):
 	if type==10:
@@ -19,3 +19,9 @@ func get_bfg(type,amount=1):
 		result.append(p)
 	
 	return result
+
+func get_base(type):
+	if type==5:
+		return preload("custom_base.tscn").instance()
+	else:
+		return .get_base(type)
