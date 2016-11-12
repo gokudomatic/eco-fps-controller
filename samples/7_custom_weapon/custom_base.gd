@@ -27,6 +27,7 @@ func shoot():
 	
 	bullet=bullet_factory.get_projectiles(data.bullet_type,data.bullet_shape,1)[0]
 	bullet.owner=owner
+	bullet.factory=bullet_factory
 	bullet.set_sample_library(sfx.get_sample_library())
 	
 	add_child(bullet)

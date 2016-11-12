@@ -25,3 +25,9 @@ func get_base(type):
 		return preload("custom_base.tscn").instance()
 	else:
 		return .get_base(type)
+
+func get_impact(type,shape):
+	if type==10:
+		return preload("beam_impact.tscn").instance()
+	else:
+		return .get_impact(type,shape)

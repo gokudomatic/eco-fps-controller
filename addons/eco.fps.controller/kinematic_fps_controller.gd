@@ -413,8 +413,13 @@ func refresh_current_target():
 	var closest_enemy_dist=-1
 	
 	var enemies=get_tree().get_nodes_in_group("enemy")
+	var enemy_aim_offset=null
 	for enemy in enemies:
-		var et=enemy.get_global_transform().origin+enemy.aim_offset
+		if enemy.has_method("get_aim_offset"):
+			enemy_aim_offset=enemy.get_aim_offset()
+		else:
+			enemy_aim_offset=Vector3()
+		var et=enemy.get_global_transform().origin+enemy_aim_offset
 		var pos=camera.unproject_position(et)
 		if screen_center.distance_to(pos)<50:
 			var ed=et.distance_to(pt)
