@@ -2,15 +2,15 @@
 
 [ext_resource path="res://addons/eco.fps.controller/kinematic_fps_controller.tscn" type="PackedScene" id=1]
 
-[sub_resource type="GDScript" id=4]
+[sub_resource type="GDScript" id=1]
 
 script/source = "extends Spatial\n\nfunc _ready():\n\t\n\tset_process_input(true)\n\nfunc _input(event):\n\tif Input.is_action_pressed(\"ui_cancel\"):\n\t\tget_tree().quit()"
 
-[sub_resource type="PlaneShape" id=1]
+[sub_resource type="PlaneShape" id=2]
 
 plane = Plane( 0, 1, 0, 0 )
 
-[sub_resource type="FixedMaterial" id=2]
+[sub_resource type="FixedMaterial" id=3]
 
 flags/visible = true
 flags/double_sided = false
@@ -47,7 +47,7 @@ textures/glow_tc = 0
 textures/normal_tc = 0
 textures/shade_param_tc = 0
 
-[sub_resource type="Environment" id=3]
+[sub_resource type="Environment" id=4]
 
 ambient_light/enabled = true
 ambient_light/color = Color( 1, 1, 1, 1 )
@@ -91,18 +91,18 @@ bcs/contrast = 1.0
 bcs/saturation = 1.0
 srgb/enabled = false
 
-[sub_resource type="BoxShape" id=6]
+[sub_resource type="BoxShape" id=5]
 
 extents = Vector3( 0.3, 0.3, 0.3 )
 
-[sub_resource type="GDScript" id=7]
+[sub_resource type="GDScript" id=6]
 
 script/source = "extends RigidBody\n\nfunc _ready():\n\tpass\n\nfunc use(source):\n\tprint(\"being used by \",source)\n\nfunc hit(source,special):\n\tprint(\"being hit by \",source)\n\tif special!=null:\n\t\tprint(\"special hit : \",special)"
 
 [node name="world" type="Spatial"]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
-script/script = SubResource( 4 )
+script/script = SubResource( 1 )
 
 [node name="StaticBody" type="StaticBody" parent="."]
 
@@ -110,7 +110,7 @@ _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 input/ray_pickable = true
 input/capture_on_drag = false
 shape_count = 1
-shapes/0/shape = SubResource( 1 )
+shapes/0/shape = SubResource( 2 )
 shapes/0/transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 shapes/0/trigger = false
 collision/layers = 1
@@ -123,7 +123,7 @@ constant_angular_velocity = Vector3( 0, 0, 0 )
 [node name="CollisionShape" type="CollisionShape" parent="StaticBody"]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
-shape = SubResource( 1 )
+shape = SubResource( 2 )
 trigger = false
 _update_shape_index = 0
 
@@ -132,7 +132,7 @@ _update_shape_index = 0
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 layers = 1
 geometry/visible = true
-geometry/material_override = SubResource( 2 )
+geometry/material_override = SubResource( 3 )
 geometry/cast_shadow = 1
 geometry/receive_shadows = true
 geometry/range_begin = 0.0
@@ -157,7 +157,7 @@ weapon = "ball"
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
-environment = SubResource( 3 )
+environment = SubResource( 4 )
 
 [node name="item1" type="RigidBody" parent="."]
 
@@ -166,7 +166,7 @@ transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.16142, -5.06604 )
 input/ray_pickable = true
 input/capture_on_drag = false
 shape_count = 1
-shapes/0/shape = SubResource( 6 )
+shapes/0/shape = SubResource( 5 )
 shapes/0/transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 shapes/0/trigger = false
 collision/layers = 1
@@ -187,7 +187,7 @@ velocity/linear = Vector3( 0, 0, 0 )
 velocity/angular = Vector3( 0, 0, 0 )
 damp_override/linear = -1.0
 damp_override/angular = -1.0
-script/script = SubResource( 7 )
+script/script = SubResource( 6 )
 
 [node name="TestCube" type="TestCube" parent="item1"]
 
@@ -211,7 +211,7 @@ geometry/baked_light_tex_id = 0
 [node name="CollisionShape" type="CollisionShape" parent="item1"]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
-shape = SubResource( 6 )
+shape = SubResource( 5 )
 trigger = false
 _update_shape_index = 0
 

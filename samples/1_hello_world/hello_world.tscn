@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=1]
 
-[ext_resource path="res://samples/1_hello_world/sky/sky.cube" type="CubeMap" id=1]
+[ext_resource path="res://samples/common/sky/sky.cube" type="CubeMap" id=1]
 [ext_resource path="res://addons/eco.fps.controller/kinematic_fps_controller.tscn" type="PackedScene" id=2]
 
 [sub_resource type="GDScript" id=1]

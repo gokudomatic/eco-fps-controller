@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=1]
 
 [ext_resource path="res://addons/eco.fps.controller/kinematic_fps_controller.tscn" type="PackedScene" id=1]
-[ext_resource path="res://samples/2_basic_weapon/models/revolver/revolver.scn" type="PackedScene" id=2]
+[ext_resource path="res://samples/2_basic_weapon/revolver.scn" type="PackedScene" id=2]
 [ext_resource path="res://samples/2_basic_weapon/room.scn" type="PackedScene" id=3]
 
 [sub_resource type="GDScript" id=1]

@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=1]
 
 [ext_resource path="res://samples/7_custom_weapon/beam_impact.gd" type="Script" id=1]
-[ext_resource path="res://samples/7_custom_weapon/textures/particle.png" type="Texture" id=2]
+[ext_resource path="res://samples/common/textures/particle.png" type="Texture" id=2]
 
 [sub_resource type="FixedMaterial" id=1]
 
@@ -41,7 +41,7 @@ textures/glow_tc = 0
 textures/normal_tc = 0
 textures/shade_param_tc = 0
 
-[sub_resource type="SampleLibrary" id=5]
+[sub_resource type="SampleLibrary" id=2]
 
 
 [node name="beam" type="Spatial"]
@@ -126,6 +126,6 @@ params/attenuation/distance_exp = 1.0
 params/emission_cone/degrees = 180.0
 params/emission_cone/attenuation_db = -6.0
 config/polyphony = 1
-config/samples = SubResource( 5 )
+config/samples = SubResource( 2 )
 
 
