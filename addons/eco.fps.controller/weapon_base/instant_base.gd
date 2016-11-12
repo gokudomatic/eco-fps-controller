@@ -1,5 +1,5 @@
 
-extends "projectile_abstract.gd"
+extends "abstract_base.gd"
 
 var sfx_class=preload("res://addons/eco.fps.controller/explosions/SpacialSoundEffect.tscn")
 

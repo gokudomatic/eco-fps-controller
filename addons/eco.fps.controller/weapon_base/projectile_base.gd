@@ -1,5 +1,5 @@
 
-extends "projectile_abstract.gd"
+extends "abstract_base.gd"
 
 var bullet_pool=[]
 

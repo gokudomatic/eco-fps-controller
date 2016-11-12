@@ -1,2 +1,2 @@
-extends "projectile_abstract.gd"
+extends "abstract_base.gd"
 

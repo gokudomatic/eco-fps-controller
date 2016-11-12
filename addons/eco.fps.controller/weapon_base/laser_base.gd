@@ -1,5 +1,5 @@
 
-extends "projectile_abstract.gd"
+extends "abstract_base.gd"
 
 onready var sfx=get_node("sfx")
 
@@ -103,7 +103,6 @@ func reset():
 func _fixed_process(delta):
 	ammo_consummation_timeout-=delta
 	if cartridge_capacity>-1 and ammo_consummation_timeout<=0:
-		print("tick")
 		remaining_bullets-=1
 		data.notify_attribute_change("nb_bullets",remaining_bullets)
 		data.notify_ammo_used()

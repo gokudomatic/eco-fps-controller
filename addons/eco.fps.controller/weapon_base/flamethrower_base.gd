@@ -1,5 +1,5 @@
 
-extends "projectile_abstract.gd"
+extends "abstract_base.gd"
 
 onready var sfx=get_node("sfx")
 
