@@ -1,4 +1,4 @@
-extends "res://addons/eco.fps.controller/weapon_base/projectile_abstract.gd"
+extends "res://addons/eco.fps.controller/weapon_base/abstract_base.gd"
 
 onready var sfx=get_node("sfx")
 

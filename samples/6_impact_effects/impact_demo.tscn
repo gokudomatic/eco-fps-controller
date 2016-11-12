@@ -1,10 +1,10 @@
 [gd_scene load_steps=13 format=1]
 
 [ext_resource path="res://samples/6_impact_effects/room.scn" type="PackedScene" id=1]
-[ext_resource path="res://addons/eco.fps.controller/explosions/smoke_particle.png" type="Texture" id=2]
+[ext_resource path="res://addons/eco.fps.controller/data/smoke_particle.png" type="Texture" id=2]
 [ext_resource path="res://addons/eco.fps.controller/kinematic_fps_controller.tscn" type="PackedScene" id=3]
 [ext_resource path="res://samples/6_impact_effects/scarecrow.scn" type="PackedScene" id=4]
-[ext_resource path="res://addons/eco.fps.controller/explosions/flame1.png" type="Texture" id=5]
+[ext_resource path="res://addons/eco.fps.controller/data/flame1.png" type="Texture" id=5]
 
 [sub_resource type="GDScript" id=1]
 
@@ -62,7 +62,7 @@ extents = Vector3( 3.69163, 1, 3.68059 )
 
 [sub_resource type="GDScript" id=6]
 
-script/source = "extends RigidBody\n\nfunc _ready():\n\t# Called every time the node is added to the scene.\n\t# Initialization here\n\tpass\n\nfunc hit(source,special):\n\tprint(\"hit. special:\",special)\n\t\n\tif special and not get_node(\"dummyfire\").is_emitting() and not get_node(\"dummyacide\").is_emitting():\n\t\tvar t=get_node(\"Tween\")\n\t\tt.interpolate_callback(self,3,\"end_fire\")\n\t\tif source.get_modifier(\"attack.elemental_impact\")==\"acide\":\n\t\t\tget_node(\"dummyacide\").set_emitting(true)\n\t\telif source.get_modifier(\"attack.elemental_impact\")==\"fire\":\n\t\t\tget_node(\"dummyfire\").set_emitting(true)\n\t\tt.start()\n\t\nfunc end_fire():\n\tget_node(\"dummyfire\").set_emitting(false)\n\tget_node(\"dummyacide\").set_emitting(false)\n"
+script/source = "extends RigidBody\n\nfunc _ready():\n\t# Called every time the node is added to the scene.\n\t# Initialization here\n\tpass\n\nfunc hit(source,special):\n\t\n\tif special and not get_node(\"dummyfire\").is_emitting() and not get_node(\"dummyacide\").is_emitting():\n\t\tvar t=get_node(\"Tween\")\n\t\tt.interpolate_callback(self,3,\"end_fire\")\n\t\tif source.get_modifier(\"attack.elemental_impact\")==\"acide\":\n\t\t\tget_node(\"dummyacide\").set_emitting(true)\n\t\telif source.get_modifier(\"attack.elemental_impact\")==\"fire\":\n\t\t\tget_node(\"dummyfire\").set_emitting(true)\n\t\tt.start()\n\t\nfunc end_fire():\n\tget_node(\"dummyfire\").set_emitting(false)\n\tget_node(\"dummyacide\").set_emitting(false)\n"
 
 [sub_resource type="FixedMaterial" id=7]
 
