@@ -1,3 +1,12 @@
+wood1.png,particle.png
+
+Texture made in Blender and Inkscape
+License CC0 Public Domain
+
+------------
+
+Ceil.png, Floor1.png, Floor2.png, Wall.png
+
 Textures from Freedoom 
 https://github.com/freedoom/freedoom
 
@@ -34,5 +43,17 @@ CREDITS.
 
 -------------------
 
+straw.jpg
+
 Straw texture from Texture library 2013 Dmitriy Chugai
 http://texturelib.com/license/
+
+Terms of Use
+All images are taken by my own cameras and edited by me.
+
+They are free for commercial and non-commercial use with the only limitation: you are not allowed to sell or distribute original or slightly modified images alone or in packs. You can only distribute them as an integral part of your product.
+
+Credit texturelib.com if it is possible.
+
+Texture library © 2013 Dmitriy Chugai 
+admin@texturelib.com

@@ -4,7 +4,7 @@
 
 [sub_resource type="GDScript" id=1]
 
-script/source = "extends Spatial\n\nfunc _ready():\n\t\n\tset_process_input(true)\n\nfunc _input(event):\n\tif Input.is_action_pressed(\"ui_cancel\"):\n\t\tget_tree().quit()"
+script/source = "extends Spatial\n\nfunc _ready():\n\tset_process_input(true)\n\nfunc _input(event):\n\tif Input.is_action_pressed(\"ui_cancel\"):\n\t\tget_tree().quit()"
 
 [sub_resource type="PlaneShape" id=2]
 
@@ -97,7 +97,7 @@ extents = Vector3( 0.3, 0.3, 0.3 )
 
 [sub_resource type="GDScript" id=6]
 
-script/source = "extends RigidBody\n\nfunc _ready():\n\tpass\n\nfunc use(source):\n\tprint(\"being used by \",source)\n\nfunc hit(source,special):\n\tprint(\"being hit by \",source)\n\tif special!=null:\n\t\tprint(\"special hit : \",special)"
+script/source = "extends RigidBody\n\nfunc _ready():\n\tpass\n\n# when the user press the use action key and the controller is in range and direction of this node, this method is called.\n# source is the controller\'s data node\nfunc use(source):\n\tprint(\"being used by \",source)\n\n# when the this node get hit by a bullet, this method is called.\n# source is the bullet node\n# special = true when the bullet has a special effect.\nfunc hit(source,special):\n\tprint(\"being hit by \",source)\n\tif special!=null:\n\t\tprint(\"special hit : \",special)"
 
 [node name="world" type="Spatial"]
 

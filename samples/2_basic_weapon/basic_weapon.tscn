@@ -6,7 +6,7 @@
 
 [sub_resource type="GDScript" id=1]
 
-script/source = "extends Spatial\n\nfunc _ready():\n\tvar data=get_node(\"player\").get_data()\n\tdata.bullet_pool_capacity=6\n\tget_node(\"player\").set_loaded_ammo()\n\tdata.reset_pool()\n\n\tset_process_input(true)\n\nfunc _input(event):\n\tif Input.is_action_pressed(\"ui_cancel\"):\n\t\tget_node(\"player\")._set_active(false)\n\t\tget_tree().quit()\n\nfunc _on_player_attribute_changed( key, value ):\n\tif key==\"nb_bullets\":\n\t\tget_node(\"simpleHUD/Label\").set_text(str(value))\n\n\nfunc _on_player_reload_weapon():\n\tget_node(\"weapon_animation\").play(\"reload_weapon\")\n"
+script/source = "extends Spatial\n\nfunc _ready():\n\tvar data=get_node(\"player\").get_data()\n\t# set the cartridge capacity to 6 bullets\n\tdata.bullet_pool_capacity=6\n\t# reinitialize the controller\'s weapon\n\tget_node(\"player\").set_loaded_ammo()\n\tdata.reset_pool()\n\n\tset_process_input(true)\n\nfunc _input(event):\n\tif Input.is_action_pressed(\"ui_cancel\"):\n\t\tget_tree().quit()\n\nfunc _on_player_attribute_changed( key, value ):\n\t# The controller send all value changes through the \"attribute_changed\" signal. If life or number of ammo changes, it is coming here.\n\tif key==\"nb_bullets\":\n\t\tget_node(\"simpleHUD/Label\").set_text(str(value))\n\n\nfunc _on_player_reload_weapon():\n\t# if the player presses the reload action key, the controller catch it and send a signal here.\n\tget_node(\"weapon_animation\").play(\"reload_weapon\")\n"
 
 [sub_resource type="Environment" id=2]
 

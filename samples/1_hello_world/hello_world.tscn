@@ -5,7 +5,7 @@
 
 [sub_resource type="GDScript" id=1]
 
-script/source = "extends Spatial\n\nfunc _ready():\n\tset_process_input(true)\n\nfunc _input(event):\n\tif Input.is_action_pressed(\"ui_cancel\"):\n\t\tget_node(\"player\")._set_active(false)\n\t\tget_tree().quit()"
+script/source = "extends Spatial\n\nfunc _ready():\n\tset_process_input(true)\n\n# code for halting the demo when the user press ESC (ui_cancel)\nfunc _input(event):\n\tif Input.is_action_pressed(\"ui_cancel\"):\n\t\tget_tree().quit()"
 
 [sub_resource type="FixedMaterial" id=2]
 

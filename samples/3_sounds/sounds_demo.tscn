@@ -9,7 +9,7 @@
 
 [sub_resource type="GDScript" id=1]
 
-script/source = "extends Spatial\n\nfunc _ready():\n\t\n\tvar data=get_node(\"player\").get_data()\n\tdata.set_modifier(\"attack.elemental_impact\",\"explosion\") # set impact to explosive\n\tdata.set_modifier(\"attack.elemental_chance\",4) #always have explosion\n\tdata.reset_pool()\n\t\n\tset_process_input(true)\n\nfunc _input(event):\n\tif Input.is_action_pressed(\"ui_cancel\"):\n\t\tget_node(\"player\")._set_active(false)\n\t\tget_tree().quit()"
+script/source = "extends Spatial\n\nfunc _ready():\n\t\n\t# set the player\'s weapon to explosive impact\n\tvar data=get_node(\"player\").get_data()\n\tdata.set_modifier(\"attack.elemental_impact\",\"explosion\") # set impact to explosive\n\tdata.set_modifier(\"attack.elemental_chance\",4) #set chance of explosion to 1/4\n\tdata.reset_pool()\n\t\n\tset_process_input(true)\n\nfunc _input(event):\n\tif Input.is_action_pressed(\"ui_cancel\"):\n\t\tget_tree().quit()"
 
 [sub_resource type="PlaneShape" id=2]
 
