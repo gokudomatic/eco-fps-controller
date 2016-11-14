@@ -1,11 +1,8 @@
 extends "res://addons/eco.fps.controller/weapon_base/abstract_base.gd"
 
 onready var sfx=get_node("sfx")
-
 var charge_delay=1
-
 var charge=0
-
 var bullet=null
 
 func _fixed_process(delta):

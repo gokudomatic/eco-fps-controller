@@ -21,8 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-!!! Assets and resource !!!
-Every picture and sound have their own license independently from the source code.
-If you dont comply with one or more of those licenses, you must delete the 
-resources and provide your own. Only files in "./samples" folder contain non-MIT licensed files.
-GDScript source code in "./samples" is however licensed as MIT License.
+= Assets =
+Assets like textures and sounds are provided under their own license. 
+They are either in public domain or CC BY-SA. It is possible to not comply
+to those licenses by removing or replacing the assets. This won't affect
+the source code of the controller.

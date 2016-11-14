@@ -5,7 +5,7 @@
 
 [sub_resource type="GDScript" id=1]
 
-script/source = "extends Spatial\n\nvar p1=Vector2(5,11)\nvar p2=Vector2(55,11)\nvar p3=Vector2(5,208)\n\nfunc _ready():\n\tset_process_input(true)\n\t\n\tvar data=get_node(\"player\").get_data()\n\tdata.reset_pool()\n\nfunc _input(event):\n\tif Input.is_action_pressed(\"ui_cancel\"):\n\t\tget_tree().quit()\n\nfunc _on_player_attribute_changed( key, value ):\n\tif key==\"custom_charge\":\n\t\tvar v1=p3.linear_interpolate(p1,value)\n\t\tvar v2=p3.linear_interpolate(p2,value)\n\t\t\n\t\tvar ap=Vector2Array([v1,v2,p3])\n\t\tget_node(\"CanvasLayer/bar\").set_polygon(ap)\n"
+script/source = "extends Spatial\n\n# coordinates for the triangle GUI charge bar\nvar p1=Vector2(5,11)\nvar p2=Vector2(55,11)\nvar p3=Vector2(5,208)\n\nfunc _ready():\n\tset_process_input(true)\n\t\n\t# initialize controller\'s custom weapon\n\tget_node(\"player\").get_data().reset_pool()\n\nfunc _input(event):\n\tif Input.is_action_pressed(\"ui_cancel\"):\n\t\tget_tree().quit()\n\nfunc _on_player_attribute_changed( key, value ):\n\t# update the ui charge bar. The key used here is defined in the custom weapon base.\n\tif key==\"custom_charge\":\n\t\t# redraw the triangle proportionaly to the charge value\n\t\tvar v1=p3.linear_interpolate(p1,value)\n\t\tvar v2=p3.linear_interpolate(p2,value)\n\t\t\n\t\tvar ap=Vector2Array([v1,v2,p3])\n\t\tget_node(\"CanvasLayer/bar\").set_polygon(ap)\n"
 
 [sub_resource type="FixedMaterial" id=2]
 
@@ -50,7 +50,7 @@ plane = Plane( 0, 1, 0, 0 )
 
 [sub_resource type="GDScript" id=4]
 
-script/source = "extends \"res://addons/eco.fps.controller/kinematic_fps_controller.gd\"\n\nfunc get_bullet_factory_instance():\n\treturn preload(\"custom_factory.gd\").new()"
+script/source = "extends \"res://addons/eco.fps.controller/kinematic_fps_controller.gd\"\n\n# defines a custom controller extending the default one.\n\nfunc get_bullet_factory_instance():\n\t# a custom factory is assigned to the controller\n\treturn preload(\"custom_factory.gd\").new()"
 
 [sub_resource type="Environment" id=5]
 
