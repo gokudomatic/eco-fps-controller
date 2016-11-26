@@ -1,8 +1,9 @@
-Demo 7 : Custom weapons
+# Demo 7 : Custom weapons
 
 Here's the demo for the biggest part of this controller, the customization.
 
 The controller was made with the idea of being extended without restriction. Thanks to Godot node system and to the GDScript's pythonic ability, it is possible to very easily add features without reimplementing everything. You only need to create the parts you need and register them in the weapon factory.
+
 There are 6 main parts you can change:
 * the data model, which contains all attributes concerning the player. It is not always needed to change it, especially if it's only to add some attributes since it has a modifier dictionnary which contains a dynamic list of attributes. Note: ammo automatic regeneration should be done here.
 * the controller itself, if you need to add some core features to the controller itself. It should not contain any logic about weapons (that goes in weapon base) nor about the player himself (that goes in the data model).
