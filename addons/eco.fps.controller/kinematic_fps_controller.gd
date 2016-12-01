@@ -22,7 +22,9 @@ var current_target_2d_pos=null
 var multijump=0
 var is_attacking=false
 var is_jumping=false
+var is_running=false
 var weapon_base=null
+var body_position="stand"
 
 onready var bullet_factory=null
 onready var player_data=null
@@ -30,6 +32,8 @@ onready var player_data=null
 onready var camera=get_node("eco_yaw/camera")
 onready var sfx=get_node("eco_sfx")
 onready var tween=get_node("eco_tween")
+
+onready var body=get_node("eco_body")
 
 var aim_offset=Vector3(0,1.5,0)
 
@@ -165,6 +169,13 @@ func _input(ie):
 			weapon_base.reload()
 			attack_timeout=player_data.reload_time
 			emit_signal("reload_weapon")
+		elif Input.is_action_pressed("ui_crouch"):
+			if body_position=="crouch":
+				stand()
+				body_position="stand"
+			else:
+				crouch()
+				body_position="crouch"
 
 
 # main loop
@@ -259,6 +270,8 @@ func _walk(delta):
 		is_attacking=false
 		stop_shoot()
 	
+	is_running=Input.is_action_pressed("ui_run")
+	
 	#reset the flag for actor's movement state
 	is_moving=(direction.length()>0)
 	
@@ -301,7 +314,7 @@ func _walk(delta):
 		velocity.y+=delta*GRAVITY*GRAVITY_FACTOR
 	
 	# calculate the target where the player want to move
-	var target=direction*player_data.walk_speed
+	var target=direction*player_data.get_walk_speed(body_position,is_running)
 	# if the character is moving, he must accelerate. Otherwise he deccelerates.
 	var accel=DEACCEL
 	if is_moving:
@@ -338,6 +351,8 @@ func _walk(delta):
 	
 		# jump
 		if Input.is_action_pressed(action_jump):
+			print("a")
+		if Input.is_action_pressed(action_jump) and body_position=="stand":
 			velocity.y=player_data.jump_strength
 			jump_timeout=MAX_JUMP_TIMEOUT
 			on_floor=false
@@ -432,6 +447,21 @@ func refresh_current_target():
 
 func play_sound(sound):
 	sfx.play(sound)
+
+# crouch ########################################################3
+func crouch():
+	body.get_shape().set_height(0.1)
+	body.get_shape().set_radius(0.1)
+	body.set_translation(Vector3(0,0.55,0))
+	get_node("eco_yaw/camera").set_translation(Vector3(0,0.4,0))
+	get_node("eco_body/leg").set_translation(Vector3(0,0,0.1))
+	
+func stand():
+	body.get_shape().set_height(0.8)
+	body.get_shape().set_radius(0.6)
+	body.set_translation(Vector3(0,1.4,0))
+	get_node("eco_yaw/camera").set_translation(Vector3(0,1.7,0))
+	get_node("eco_body/leg").set_translation(Vector3(0,0,1))
 
 # Weapon management ###############################################################
 func _handle_weapon(pool_type):

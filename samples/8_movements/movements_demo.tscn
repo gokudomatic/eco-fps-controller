@@ -1,0 +1,121 @@
+[gd_scene load_steps=7 format=1]
+
+[ext_resource path="res://addons/eco.fps.controller/kinematic_fps_controller.tscn" type="PackedScene" id=1]
+[ext_resource path="res://samples/8_movements/terrain.scn" type="PackedScene" id=2]
+[ext_resource path="res://samples/common/sky/sky.cube" type="CubeMap" id=3]
+
+[sub_resource type="GDScript" id=1]
+
+script/source = "extends Spatial\n\nfunc _ready():\n\tset_process_input(true)\n\nfunc _input(event):\n\tif Input.is_action_pressed(\"ui_cancel\"):\n\t\tget_tree().quit()"
+
+[sub_resource type="Environment" id=2]
+
+ambient_light/enabled = true
+ambient_light/color = Color( 0.734375, 0.697441, 0.143433, 1 )
+ambient_light/energy = 1.0
+fxaa/enabled = false
+background/mode = 4
+background/color = Color( 0, 0, 0, 1 )
+background/cubemap = ExtResource( 3 )
+background/energy = 1.0
+background/scale = 1.0
+background/glow = 0.0
+background/canvas_max_layer = null
+glow/enabled = false
+glow/blur_passes = 1
+glow/blur_scale = 1
+glow/blur_strength = 1
+glow/blur_blend_mode = null
+glow/bloom = 0.0
+glow/bloom_treshold = 0.5
+dof_blur/enabled = false
+dof_blur/blur_passes = 1
+dof_blur/begin = 100.0
+dof_blur/range = 10.0
+hdr/enabled = false
+hdr/tonemapper = 0
+hdr/exposure = 0.4
+hdr/white = 1.0
+hdr/glow_treshold = 0.95
+hdr/glow_scale = 0.2
+hdr/min_luminance = 0.4
+hdr/max_luminance = 8.0
+hdr/exposure_adj_speed = 0.5
+fog/enabled = false
+fog/begin = 100.0
+fog/begin_color = Color( 0, 0, 0, 1 )
+fog/end_color = Color( 0, 0, 0, 1 )
+fog/attenuation = 1.0
+fog/bg = true
+bcs/enabled = false
+bcs/brightness = 1.0
+bcs/contrast = 1.0
+bcs/saturation = 1.0
+srgb/enabled = false
+
+[sub_resource type="BoxShape" id=3]
+
+extents = Vector3( 20, 1, 1 )
+
+[node name="world" type="Spatial"]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+script/script = SubResource( 1 )
+
+[node name="player" parent="." instance=ExtResource( 1 )]
+
+transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.54112, 0 )
+
+[node name="terrain" parent="." instance=ExtResource( 2 )]
+
+transform/local = Transform( 5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+environment = SubResource( 2 )
+
+[node name="StaticBody" type="StaticBody" parent="."]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4278, -3.95497, 0 )
+input/ray_pickable = true
+input/capture_on_drag = false
+shape_count = 1
+shapes/0/shape = SubResource( 3 )
+shapes/0/transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+shapes/0/trigger = false
+collision/layers = 1
+collision/mask = 1
+friction = 1.0
+bounce = 0.0
+constant_linear_velocity = Vector3( 0, 0, 0 )
+constant_angular_velocity = Vector3( 0, 0, 0 )
+
+[node name="TestCube" type="TestCube" parent="StaticBody"]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+transform/local = Transform( 20, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+layers = 1
+geometry/visible = true
+geometry/material_override = null
+geometry/cast_shadow = 1
+geometry/receive_shadows = true
+geometry/range_begin = 0.0
+geometry/range_end = 0.0
+geometry/extra_cull_margin = 0.0
+geometry/billboard = false
+geometry/billboard_y = false
+geometry/depth_scale = false
+geometry/visible_in_all_rooms = false
+geometry/use_baked_light = false
+geometry/baked_light_tex_id = 0
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticBody"]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+shape = SubResource( 3 )
+trigger = false
+_update_shape_index = 0
+
+

@@ -11,6 +11,8 @@ var shield_regen_speed=50
 var no_shield_timeout=0
 var no_shield_max_timeout=5
 var walk_speed=15 setget set_speed
+var run_factor=3
+var crouch_factor=0.2
 var jump_strength=9
 var hit_invincibility_timeout=0
 var hit_invincibility_max_timeout=1
@@ -103,6 +105,14 @@ func set_life(value):
 
 func set_speed(value):
 	walk_speed=min(value,100)
+
+func get_walk_speed(position,is_running):
+	var speed=walk_speed
+	if position=="crouch":
+		speed*=crouch_factor
+	if is_running:
+		speed*=run_factor
+	return speed
 
 func get_item(item_node):
 	item_node.execute()
