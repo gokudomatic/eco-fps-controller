@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=1]
+[gd_scene load_steps=10 format=1]
 
 [ext_resource path="res://addons/eco.fps.controller/kinematic_fps_controller.tscn" type="PackedScene" id=1]
 [ext_resource path="res://samples/8_movements/terrain.scn" type="PackedScene" id=2]
 [ext_resource path="res://samples/common/sky/sky.cube" type="CubeMap" id=3]
+[ext_resource path="res://samples/8_movements/building.scn" type="PackedScene" id=4]
 
 [sub_resource type="GDScript" id=1]
 
@@ -55,7 +56,15 @@ srgb/enabled = false
 
 [sub_resource type="BoxShape" id=3]
 
-extents = Vector3( 20, 1, 1 )
+extents = Vector3( 19.8643, 1, 1 )
+
+[sub_resource type="BoxShape" id=5]
+
+extents = Vector3( 1, 1, 1 )
+
+[sub_resource type="BoxShape" id=4]
+
+extents = Vector3( 92.8551, 78.0063, 1 )
 
 [node name="world" type="Spatial"]
 
@@ -117,5 +126,75 @@ _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 shape = SubResource( 3 )
 trigger = false
 _update_shape_index = 0
+
+[node name="StaticBody1" type="StaticBody" parent="."]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+transform/local = Transform( -1.31134e-07, 0, -4.5, 0, 0.2, 0, 3, 0, -1.96701e-07, -6.7553, 42.2654, -78.7474 )
+input/ray_pickable = true
+input/capture_on_drag = false
+shape_count = 1
+shapes/0/shape = SubResource( 5 )
+shapes/0/transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+shapes/0/trigger = false
+collision/layers = 1
+collision/mask = 1
+friction = 1.0
+bounce = 0.0
+constant_linear_velocity = Vector3( 0, 0, 0 )
+constant_angular_velocity = Vector3( 0, 0, 0 )
+
+[node name="TestCube" type="TestCube" parent="StaticBody1"]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+layers = 1
+geometry/visible = true
+geometry/material_override = null
+geometry/cast_shadow = 1
+geometry/receive_shadows = true
+geometry/range_begin = 0.0
+geometry/range_end = 0.0
+geometry/extra_cull_margin = 0.0
+geometry/billboard = false
+geometry/billboard_y = false
+geometry/depth_scale = false
+geometry/visible_in_all_rooms = false
+geometry/use_baked_light = false
+geometry/baked_light_tex_id = 0
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticBody1"]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+shape = SubResource( 5 )
+trigger = false
+_update_shape_index = 0
+
+[node name="wall" type="StaticBody" parent="."]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 196.819 )
+input/ray_pickable = true
+input/capture_on_drag = false
+shape_count = 1
+shapes/0/shape = SubResource( 4 )
+shapes/0/transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+shapes/0/trigger = false
+collision/layers = 1
+collision/mask = 1
+friction = 1.0
+bounce = 0.0
+constant_linear_velocity = Vector3( 0, 0, 0 )
+constant_angular_velocity = Vector3( 0, 0, 0 )
+
+[node name="CollisionShape" type="CollisionShape" parent="wall"]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+shape = SubResource( 4 )
+trigger = false
+_update_shape_index = 0
+
+[node name="building" parent="." instance=ExtResource( 4 )]
+
+transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -10.8697, -7.32859, -82.6933 )
 
 

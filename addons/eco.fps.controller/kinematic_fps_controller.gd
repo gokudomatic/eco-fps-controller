@@ -350,8 +350,6 @@ func _walk(delta):
 			move(floor_velocity*delta)
 	
 		# jump
-		if Input.is_action_pressed(action_jump):
-			print("a")
 		if Input.is_action_pressed(action_jump) and body_position=="stand":
 			velocity.y=player_data.jump_strength
 			jump_timeout=MAX_JUMP_TIMEOUT
