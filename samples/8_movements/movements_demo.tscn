@@ -7,7 +7,7 @@
 
 [sub_resource type="GDScript" id=1]
 
-script/source = "extends Spatial\n\nfunc _ready():\n\tset_process_input(true)\n\nfunc _input(event):\n\tif Input.is_action_pressed(\"ui_cancel\"):\n\t\tget_tree().quit()"
+script/source = "extends Spatial\n\nfunc _ready():\n\tset_process_input(true)\n\nfunc _input(event):\n\tif Input.is_action_pressed(\"ui_cancel\"):\n\t\tget_tree().quit()\n\tif Input.is_key_pressed(KEY_L):\n\t\tget_node(\"player\").active=!get_node(\"player\").active"
 
 [sub_resource type="Environment" id=2]
 
@@ -74,6 +74,7 @@ script/script = SubResource( 1 )
 [node name="player" parent="." instance=ExtResource( 1 )]
 
 transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.54112, 0 )
+active = false
 
 [node name="terrain" parent="." instance=ExtResource( 2 )]
 

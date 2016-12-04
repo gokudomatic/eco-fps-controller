@@ -1,10 +1,6 @@
 
 extends KinematicBody
 
-#classes
-const default_data_model=preload("res://addons/eco.fps.controller/player_data_base.gd")
-const default_projectile_factory=preload("res://addons/eco.fps.controller/projectiles/Projectile_Factory.gd")
-
 
 var _is_loaded = false
 var velocity=Vector3()
@@ -14,32 +10,22 @@ var is_moving=false
 var on_floor=false
 var jump_timeout=0
 var step_timeout=0
-var attack_timeout=0
 var fly_mode=false
 var alive=true
-var current_target=null
-var current_target_2d_pos=null
-var multijump=0
-var is_attacking=false
 var is_jumping=false
 var is_running=false
 var is_crouching=false
-var weapon_base=null
 var body_position="stand"
+var jump_strength=9
 
-onready var bullet_factory=null
-onready var player_data=null
-
-onready var node_camera=get_node("eco_yaw/camera")
-onready var node_sfx=get_node("eco_sfx")
-onready var node_tween=get_node("eco_tween")
-onready var node_leg=get_node("eco_body/leg")
-onready var node_yaw=get_node("eco_yaw")
-onready var node_body=get_node("eco_body")
-onready var node_head_check=get_node("head_check_area")
-onready var node_action_ray=get_node("eco_yaw/camera/actionRay")
-onready var node_ray = get_node("eco_ray")
-onready var node_step_ray=get_node("eco_stepRay")
+var node_camera=null
+var node_leg=null
+var node_yaw=null
+var node_body=null
+var node_head_check=null
+var node_action_ray=null
+var node_ray = null
+var node_step_ray=null
 
 
 var aim_offset=Vector3(0,1.5,0)
@@ -48,6 +34,9 @@ const GRAVITY_FACTOR=3
 
 # params
 export(bool) var active=true setget _set_active
+export(float) var walk_speed=15
+export(float) var run_factor=3
+export(float) var crouch_factor=0.2
 
 ## dimensions
 export(float) var leg_length=0.4 setget _set_leg_length
@@ -61,10 +50,9 @@ export(String) var action_forward="ui_up"
 export(String) var action_backward="ui_down"
 export(String) var action_left="ui_left"
 export(String) var action_right="ui_right"
-export(String) var action_attack="ui_action1"
+export(String) var action_action1="ui_action1"
 export(String) var action_jump="ui_jump"
 export(String) var action_use="ui_select"
-export(String) var action_reload="ui_reload"
 
 ## physics
 export(float) var ACCEL= 2
@@ -82,56 +70,87 @@ export(float) var STAIR_JUMP_TIMEOUT=0.1
 export(float) var footstep_factor=0.004
 export(float) var view_sensitivity = 0.3
 
-export(NodePath) var sfx_library=null
-## weapon
-export(String) var weapon="" setget _set_weapon
-export(bool) var embed_children=false
-
-# signals
-signal start_shoot
-signal stop_shoot
-signal attribute_changed(key,value)
-signal reload_weapon
-signal ammo_used
-
 #################################################################################3
 
 # initializer
 func _ready():
 
+	_build_structure()
+
 	_is_loaded=true
-
-	bullet_factory=get_bullet_factory_instance()
-	
-	if player_data==null:
-		var data=default_data_model.new()
-		data.bullet_factory=bullet_factory
-		set_player_data(data)
-
-	if sfx_library!=null and !sfx_library.is_empty():
-		var node=get_node(sfx_library)
-		if node!=null and node.has_method("get_sample_library"):
-			get_node("eco_sfx").set_sample_library(node.get_sample_library())
-	
-	weapon_base=bullet_factory.get_base(player_data.weapon_base_type)
-	get_node("eco_yaw/camera/shoot-point").add_child(weapon_base)
-	weapon_base.owner=self
-	weapon_base.set_sample_library(node_sfx.get_sample_library())
 	
 	_update_params()
-	
-	if embed_children:
-		_embed_children()
-	
-	node_tween.start()
 	
 	node_action_ray.add_exception(self)
 	
 	set_fixed_process(true)
 	set_process_input(true)
+
+func _build_structure():
+	# collision
+	var body=CollisionShape.new()
+	body.set_transform(Transform(Vector3(1,0,0),Vector3(0,0,-1),Vector3(0,1,0),Vector3(0,1.4,0)))
+	var body_shape=CapsuleShape.new()
+	body_shape.set_radius(0.6)
+	body_shape.set_height(0.8)
+	body.set_shape(body_shape)
+	add_child(body)
 	
-	_regen_bullet()
+	var leg=CollisionShape.new()
+	leg.set_transform(Transform(Vector3(1,0,0),Vector3(0,1,0),Vector3(0,0,1),Vector3(0,0,1)))
+	var leg_shape=RayShape.new()
+	leg_shape.set_length(0.4)
+	leg.set_shape(leg_shape)
+	body.add_child(leg)
 	
+	# camera
+	var yaw=Spatial.new()
+	add_child(yaw)
+	
+	var camera=Camera.new()
+	camera.set_translation(Vector3(0,1.7,0))
+	yaw.add_child(camera)
+	
+	var actionRay=RayCast.new()
+	actionRay.set_enabled(true)
+	actionRay.set_cast_to(Vector3(0,0,-2))
+	camera.add_child(actionRay)
+	
+	# walking rays
+	var wallRay=RayCast.new()
+	wallRay.set_enabled(true)
+	wallRay.set_cast_to(Vector3(0,-0.8,0))
+	wallRay.set_translation(Vector3(0,0.4,0))
+	add_child(wallRay)
+	
+	var stepRay=RayCast.new()
+	stepRay.set_enabled(true)
+	stepRay.set_cast_to(Vector3(0,-0.5,0))
+	stepRay.set_translation(Vector3(0,0.75,-0.58))
+	add_child(stepRay)
+	
+	# head collision check (for crouching)
+	var head_area=Area.new()
+	head_area.set_enable_monitoring(false)
+	head_area.set_monitorable(false)
+	head_area.set_translation(Vector3(0,2.2186,0))
+	add_child(head_area)
+	
+	var head_col_shape=CollisionShape.new()
+	var head_shape=SphereShape.new()
+	head_shape.set_radius(0.2)
+	head_col_shape.set_shape(head_shape)
+	head_area.add_child(head_col_shape)
+	
+	# make links
+	node_camera=camera
+	node_leg=leg
+	node_yaw=yaw
+	node_body=body
+	node_head_check=head_area
+	node_action_ray=actionRay
+	node_ray=wallRay
+	node_step_ray=stepRay
 
 func _update_params():
 	_set_active(active)
@@ -140,7 +159,6 @@ func _update_params():
 	_set_body_height(body_height)
 	_set_camera_height(camera_height)
 	_set_action_range(action_range)
-	_set_weapon(weapon)
 
 func notify_attribute_change(key,value):
 	emit_signal("attribute_changed",key,value)
@@ -172,10 +190,6 @@ func _input(ie):
 				var obj=ray.get_collider()
 				if obj.has_method("use"):
 					obj.use(self)
-		if Input.is_action_pressed(action_reload):
-			weapon_base.reload()
-			attack_timeout=player_data.reload_time
-			emit_signal("reload_weapon")
 		if Input.is_action_pressed("ui_toggle_crouch"):
 			if body_position=="crouch":
 				stand()
@@ -186,12 +200,6 @@ func _input(ie):
 
 # main loop
 func _fixed_process(delta):
-	
-	refresh_current_target()
-	
-	if player_data.sound_to_play!=null:
-		play_sound(player_data.sound_to_play)
-		player_data.sound_to_play=null
 	
 	if fly_mode:
 		_fly(delta)
@@ -251,8 +259,6 @@ func _walk(delta):
 	# process timers
 	if jump_timeout>0:
 		jump_timeout-=delta
-	if attack_timeout>0:
-		attack_timeout-=delta
 	
 	# read the rotation of the camera
 	var aim = node_camera.get_global_transform().basis
@@ -266,12 +272,6 @@ func _walk(delta):
 		direction -= aim[0]
 	if Input.is_action_pressed(action_right):
 		direction += aim[0]
-	if Input.is_action_pressed(action_attack) and attack_timeout<=0:
-		shoot()
-		is_attacking=true
-	elif is_attacking and not Input.is_action_pressed(action_attack):
-		is_attacking=false
-		stop_shoot()
 	
 	is_running=Input.is_action_pressed("ui_run")
 	
@@ -294,14 +294,12 @@ func _walk(delta):
 	if !on_floor and jump_timeout<=0 and is_ray_colliding:
 		set_translation(node_ray.get_collision_point())
 		on_floor=true
-		play_sound("player_land")
 	elif on_floor and not is_ray_colliding:
 		# check that flag on_floor still reflects the state of the ray.
 		on_floor=false
 	
 	if on_floor:
 		if step_timeout<=0:
-			play_sound("player_footstep")
 			step_timeout=1
 		else:
 			step_timeout-=velocity.length()*footstep_factor
@@ -325,7 +323,7 @@ func _walk(delta):
 		velocity.y+=delta*GRAVITY*GRAVITY_FACTOR
 	
 	# calculate the target where the player want to move
-	var target=direction*player_data.get_walk_speed(is_crouching,is_running)
+	var target=direction*get_walk_speed(is_crouching,is_running)
 	# if the character is moving, he must accelerate. Otherwise he deccelerates.
 	var accel=DEACCEL
 	if is_moving:
@@ -362,16 +360,9 @@ func _walk(delta):
 	
 		# jump
 		if Input.is_action_pressed(action_jump) and body_position=="stand":
-			velocity.y=player_data.jump_strength
+			velocity.y=jump_strength
 			jump_timeout=MAX_JUMP_TIMEOUT
 			on_floor=false
-			multijump=player_data.get_modifier("multijump")
-			play_sound("player_jump")
-	elif Input.is_action_pressed(action_jump) and multijump>0 and jump_timeout<=0:
-		velocity.y=player_data.jump_strength
-		jump_timeout=MAX_JUMP_TIMEOUT
-		on_floor=false
-		multijump-=1
 	
 	# update the position of the raycast for stairs to where the character is trying to go, so it will cast the ray at the next loop.
 	if is_moving:
@@ -414,48 +405,6 @@ func _on_ladders_body_exit( body ):
 	if body==self:
 		fly_mode=false
 
-
-func hit(source,special=false):
-	player_data.hit(30)
-
-func get_item(item):
-	player_data.get_item(item)
-
-func explosion_blown(explosion,strength,special):
-	var t0=explosion.get_global_transform()
-	var t1=get_global_transform()
-	var blown_direction=t1.origin-t0.origin
-	velocity+=blown_direction.normalized()*strength
-
-
-func refresh_current_target():
-	var screen_center=get_viewport().get_rect().size/2
-	
-	var pt=get_global_transform().origin
-	var closest_enemy=null
-	var closest_enemy_dist=-1
-	
-	var enemies=get_tree().get_nodes_in_group("enemy")
-	var enemy_aim_offset=null
-	for enemy in enemies:
-		if enemy.has_method("get_aim_offset"):
-			enemy_aim_offset=enemy.get_aim_offset()
-		else:
-			enemy_aim_offset=Vector3()
-		var et=enemy.get_global_transform().origin+enemy_aim_offset
-		var pos=node_camera.unproject_position(et)
-		if screen_center.distance_to(pos)<50:
-			var ed=et.distance_to(pt)
-			if closest_enemy==null or ed<closest_enemy_dist:
-				closest_enemy=enemy
-				closest_enemy_dist=ed
-				current_target_2d_pos=pos
-	
-	current_target=closest_enemy
-
-func play_sound(sound):
-	node_sfx.play(sound)
-
 # crouch ########################################################3
 func crouch():
 	node_body.get_shape().set_height(0.1)
@@ -478,73 +427,22 @@ func stand():
 	is_crouching=false
 	node_head_check.set_enable_monitoring(false)
 
-# Weapon management ###############################################################
-func _handle_weapon(pool_type):
-	
-	if not _is_loaded or weapon_base==null:
-		return
-	
-	if pool_type=="base":
-		
-		weapon_base.queue_free()
-		weapon_base=bullet_factory.get_base(player_data.weapon_base_type)
-		get_node("eco_yaw/camera/shoot-point").add_child(weapon_base)
-		weapon_base.owner=self
-		weapon_base.set_sample_library(node_sfx.get_sample_library())
-	
-	weapon_base.reset()
-	weapon_base.regenerate()
 
-func _regen_bullet():
-	weapon_base.regenerate()
-	node_tween.interpolate_callback(self,1,"_regen_bullet")
-
-func shoot():
-	if weapon_base.shoot():
-		attack_timeout=1.0/player_data.fire_rate
-	emit_signal("start_shoot")
-
-func stop_shoot():
-	weapon_base.stop_shoot()
-	emit_signal("stop_shoot")
-
-func notify_ammo_used():
-	emit_signal("ammo_used")
-
-func reload_weapon(amount=-1):
-		weapon_base.reload(amount)
-
-func set_ammo(value):
-	weapon_base.remaining_total_bullets=value
-
-func get_ammo():
-	return weapon_base.remaining_total_bullets
-
-func set_loaded_ammo(value=-1):
-	if value==-1:
-		value=player_data.bullet_pool_capacity
-	weapon_base.remaining_bullets=value
-
-func get_loaded_ammo():
-	return weapon_base.remaining_bullets
+func get_walk_speed(is_crouching,is_running):
+	var speed=walk_speed
+	if is_crouching:
+		speed*=crouch_factor
+	if is_running:
+		speed*=run_factor
+	return speed
 
 # Setter/Getter #################################################################
-
-func get_data():
-	return player_data
-
-func set_player_data(value):
-	if value!=player_data:
-		player_data=value
-		player_data.connect("attribute_changed",self,"notify_attribute_change")
-		player_data.connect("pool_changed",self,"_handle_weapon")
-		player_data.connect("ammo_used",self,"notify_ammo_used")
 
 func _set_leg_length(value):
 	leg_length=value
 	if _is_loaded:
 		node_leg.get_shape().set_length(value)
-		get_node("eco_ray").set_cast_to(Vector3(0,-value*2,0))
+		node_ray.set_cast_to(Vector3(0,-value*2,0))
 
 func _set_body_radius(value):
 	body_radius=value
@@ -575,13 +473,3 @@ func _set_active(value):
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	else:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-
-func _set_weapon(value):
-	weapon=value
-	
-	if _is_loaded:
-		player_data.equip_weapon(bullet_factory.get_config(weapon))
-		emit_signal("attribute_changed","weapon",value)
-
-func get_bullet_factory_instance():
-	return default_projectile_factory.new()

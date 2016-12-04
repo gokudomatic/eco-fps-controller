@@ -106,9 +106,9 @@ func set_life(value):
 func set_speed(value):
 	walk_speed=min(value,100)
 
-func get_walk_speed(position,is_running):
+func get_walk_speed(is_crouching,is_running):
 	var speed=walk_speed
-	if position=="crouch":
+	if is_crouching:
 		speed*=crouch_factor
 	if is_running:
 		speed*=run_factor
