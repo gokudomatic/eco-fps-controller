@@ -1,6 +1,4 @@
-
 extends KinematicBody
-
 
 var _is_loaded = false
 var velocity=Vector3()
@@ -17,7 +15,6 @@ var is_running=false
 var is_crouching=false
 var body_position="stand"
 var jump_strength=9
-
 var node_camera=null
 var node_leg=null
 var node_yaw=null
@@ -26,8 +23,6 @@ var node_head_check=null
 var node_action_ray=null
 var node_ray = null
 var node_step_ray=null
-
-
 var aim_offset=Vector3(0,1.5,0)
 
 const GRAVITY_FACTOR=3
@@ -74,15 +69,10 @@ export(float) var view_sensitivity = 0.3
 
 # initializer
 func _ready():
-
 	_build_structure()
-
 	_is_loaded=true
-	
 	_update_params()
-	
 	node_action_ray.add_exception(self)
-	
 	set_fixed_process(true)
 	set_process_input(true)
 
@@ -159,9 +149,6 @@ func _update_params():
 	_set_body_height(body_height)
 	_set_camera_height(camera_height)
 	_set_action_range(action_range)
-
-func notify_attribute_change(key,value):
-	emit_signal("attribute_changed",key,value)
 
 func _embed_children():
 	var children=self.get_children()
@@ -375,7 +362,6 @@ func _get_floor_velocity(ray,delta):
 	# only static or rigid bodies are considered as floor. If the character is on top of another character, he can be ignored.
 	var object = ray.get_collider()
 	if object extends RigidBody or object extends StaticBody:
-		var point = ray.get_collision_point() - object.get_translation()
 		var floor_angular_vel = Vector3()
 		# get the floor velocity and rotation depending on the kind of floor
 		if object extends RigidBody:
@@ -389,13 +375,13 @@ func _get_floor_velocity(ray,delta):
 			var transform = Matrix3(Vector3(1, 0, 0), floor_angular_vel.x)
 			transform = transform.rotated(Vector3(0, 1, 0), floor_angular_vel.y)
 			transform = transform.rotated(Vector3(0, 0, 1), floor_angular_vel.z)
+			var point = ray.get_collision_point() - object.get_translation()
 			floor_velocity += transform.xform_inv(point) - point
 			
 			# if the floor has an angular velocity (rotation force), the character must rotate too.
 			yaw = fmod(yaw + rad2deg(floor_angular_vel.y) * delta, 360)
 			node_yaw.set_rotation(Vector3(0, deg2rad(yaw), 0))
 	return floor_velocity
-
 
 func _on_ladders_body_enter( body ):
 	if body==self:
@@ -426,7 +412,6 @@ func stand():
 	node_leg.set_translation(Vector3(0,0,1))
 	is_crouching=false
 	node_head_check.set_enable_monitoring(false)
-
 
 func get_walk_speed(is_crouching,is_running):
 	var speed=walk_speed
