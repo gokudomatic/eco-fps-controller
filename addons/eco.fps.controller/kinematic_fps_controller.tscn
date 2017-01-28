@@ -15,7 +15,7 @@ length = 0.4
 
 radius = 0.1874
 
-[node name="actor" type="KinematicBody" groups=[ "player" ]]
+[node name="actor" type="KinematicBody"]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 input/ray_pickable = true
